@@ -59,4 +59,4 @@ plugins:
 nav:
   - Home: index.md
   - Wishlist: 
-      - Send Items to Specific Mod Manager: nxm-handler.md
+      - Send Downloads to Specific Mod Manager: nxm-handler.md

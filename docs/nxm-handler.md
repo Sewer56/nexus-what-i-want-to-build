@@ -1,4 +1,4 @@
-# Send Download to Specific Mod Manager
+# Send Downloads to Specific Mod Manager
 
 !!! info "Current System Overview"
     
@@ -91,11 +91,16 @@ These plugins are often unmaintained, become broken, and unsupported, *making ea
     - Limited game support/hardcoded games (especially `nxmhandler`)
     - Not user-friendly for average modders
 
-## A Real-World Example
+## Real Examples/Snippets
 
-!!! info "I've always wanted to make an Online Multiplayer mod with Built-in Mod Support"
+A lot of my past experiences have revolved around modding new games; treading new ground, reverse
+engineering games which have not had any sort of modding community or tools available before.
 
-    In fact, a few years ago, [I have done that](https://github.com/Sewer56/Riders.Tweakbox).
+For example:
+
+!!! example "I've always wanted to make an Online Multiplayer mod with Built-in Mod Support"
+
+    In fact, a few years ago, [I kinda did that](https://github.com/Sewer56/Riders.Tweakbox).
 
     <figure markdown="span" class="annotate">
         ![images](./images/online-mp.webp)
@@ -103,21 +108,93 @@ These plugins are often unmaintained, become broken, and unsupported, *making ea
         First ever PC code mod: all reverse engineering, netcode, from scratch by yours truly.</figcaption>
     </figure>
 
-Unfortunately, as things stand today, it is not possible to make a mod like this that integrates with
-Nexus Mods for its modding capabilities.
+Unfortunately, as things stand today, it is ***not possible*** to make a mod like this that
+integrates with Nexus Mods while providing a ***good user experience***.
 
-1. Vortex does not have the features to support this kind of multiplayer experience.
-    - Mod configuration, syncing of mod data, automatic dependency resolution, etc.
-2. Not allowed a 'Mod Manager Download' button on Nexus Mods, ***because game is not supported by Vortex.***
+1. Vortex *does not* have the features to support the desired experience.
+    - Mod configuration synchronization, APIs to pull mod info from a mod, automatic dependency resolution, etc.
+    - Even if it did, the UX would not be well suited.
+2. Not allowed a 'Mod Manager Download' button on Nexus Mods, ***because the game is not supported by Vortex.***
 
-The real issue in particular arises when you want to join a lobby with friends, and you are missing
-a mod that they have installed.
+!!! warning "Therefore, all users must learn how to manually download and install all mods by hand."
 
-- Join a lobby
-- Missing a mod: need to download it
-- Not a premium user: need to manually download it
-- No 'Mod Manager Download' button: user does not know how to manually install the mod!
-- Repeat this step for every mod the user is missing that the host has installed.
+    And that is a barrier to entry, ***especially*** *if you want to play with less technical friends*.<br/>
+    Manual installation of mods is not only time-consuming, but also error-prone.<br/>
+
+In this specific case, ***we failed to make free modding easy.***
+
+### UX for installing Mods with 3rd Party Mod Managers is Lacking
+
+!!! note "I am also a Mod Manager author outside of the Nexus Mods App"
+
+    People use my modding framework with lesser known games, both on Nexus and elsewhere.
+
+***On Nexus only***, I have to ask users to install mods by dragging and dropping the mod archives
+*into my software's UI*, which then extracts the files to the correct location.
+
+!!! info "This means that end users get an inferior experience 😔"
+
+    Compared to other websites which offer a '1 click download' button.
+
+    <figure markdown="span" class="annotate">
+        ![images](./images/gb-1click.webp)
+        <figcaption>S</figcaption>
+    </figure>
+
+However, end users are not familiar with this functionality, as they often skip reading the mod description,
+as well as the built-in tutorials.
+
+Leading to questions such as ***how to install mods sourced from Nexus Mods***.<br/>
+A '1 click download' button would help, but ***I am not able (allowed) to have that.***
+
+### Miscellaneous Note: Joining Lobbies with Friends
+
+!!! info "A bit off topic, but I thought I'd bring this up."
+
+    As this is a problem that's been on my mind for years and I've never had an opportunity to properly voice it.
+
+!!! danger "Syncing Mods with Friends as a Free User Is a Nightmare"
+
+Suppose you want to join a *friend's multiplayer lobby* and
+are missing some mods; so you need to sync up with them by downloading the same mods 
+from Nexus Mods.
+
+```mermaid
+flowchart TD
+    A[User joins lobby] --> B{Missing mods?}
+    B -->|Yes| C[Need to download mod]
+    B -->|No| Z[✅ Can play!]
+    
+    C --> D{Premium user?}
+    D -->|Yes| E[✅ Auto-download & install]
+    D -->|No| F[Must manually download]
+    
+    F --> G{Mod Manager Download button available?}
+    G -->|No| I[❌ Manual download + manual install]
+    
+    E --> M{More missing mods?}
+    I --> M
+    
+    M -->|Yes| C
+    M -->|No| Z
+    
+    style Z fill:#00c8531a,stroke:#00c853
+    style E fill:#00c8531a,stroke:#00c853
+    style I fill:#ff17441a,stroke:#ff1744
+```
+
+If the user is a free user, and they are missing 50 cosmetic mods, then for each download they will have to:
+
+- Go to website.
+- Click manual download button.
+- Wait 5 seconds.
+- Wait for download to finish.
+- ***Manually install the mod.***
+
+Repeat for every mod.
+
+The problematic part is manual installation; which is not only time-consuming, but also
+error-prone. Because no program that isn't Vortex is allowed to have the 'Mod Manager Download' button,
 
 ## What I Want
 
