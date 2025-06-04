@@ -65,4 +65,4 @@ nav:
       - Send Downloads to Specific Mod Manager: nxm-handler.md
       - Automatic Metadata Parsing: metadata-parsing.md
       - External Notifications for Issue Tracker: issue-tracker.md
-      - Automatic Download of Tiny Files without Premium: tiny-file-downloads.md
+      - Batch Tiny File Downloads: tiny-file-downloads.md
