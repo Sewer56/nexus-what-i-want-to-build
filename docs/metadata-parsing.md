@@ -2,6 +2,8 @@
 
 !!! info "Certain mods use standardized modding frameworks with supporting metadata."
 
+- **Status:** Unknown/Shortlisted 
+
 === "Stardew Valley (SMAPI)"
 
     ```

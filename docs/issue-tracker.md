@@ -1,5 +1,7 @@
 # External Notifications for Issue Tracker
 
+- **Status:** Unknown
+
 <figure markdown="span" class="annotate">
   ![images](./images/issues-list-collection.webp)
   <figcaption>Our Integrated Issue Tracker.</figcaption>
