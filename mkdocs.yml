@@ -61,6 +61,8 @@ plugins:
 
 nav:
   - Home: index.md
-  - Wishlist: 
+  - Wishlist (Site Features): 
       - Send Downloads to Specific Mod Manager: nxm-handler.md
-      - Metadata Parsing: metadata-parsing.md
+      - Automatic Metadata Parsing: metadata-parsing.md
+      - External Notifications for Issue Tracker: issue-tracker.md
+      - Automatic Download of Tiny Files without Premium: tiny-file-downloads.md

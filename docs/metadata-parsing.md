@@ -78,8 +78,6 @@ This metadata can be extremely useful for improving the user experience for user
   <figcaption>A diagnostic I implemented in the 'Nexus Mods App' for showing missing Bannerlord dependencies.</figcaption>
 </figure>
 
-1. (Dependencies are automatically downloaded when user clicks 'Launch Application')
-
 Most games have mods which require additional dependencies, this usually comes in a form 
 where downloading `Mod B` requires that you first download and enable `Mod A`.
 
@@ -101,11 +99,14 @@ premium users to download it automatically.
     <i>This is how easy going from 0 mods to mods should be.</i></p>
 </center>
 
+1. (Dependencies are automatically downloaded when user clicks 'Launch Application')
+
 ## Example: Mod Update Metadata
 
 !!! info "Some modding frameworks support updating mods in a native way."
 
-    This allows you to know which file is an update for which file automatically, plugs into automatic dependency resolution and more.
+    This allows you to know which file is an update for which file automatically, plugs into 
+    automatic dependency resolution, gives you direct download links, and more.
 
     !!! tip "Especially helpful if there's multiple mods on a mod page."
 
@@ -116,10 +117,26 @@ premium users to download it automatically.
 
     So consider that an example 😉
 
+Currently, adding update metadata to certain mods on Nexus Mods is a rather unintuitive process.
+
+The problem is, you need to know the mod's `'modId'` and the game's `'gamedomain'` in order to
+specify where a mod lives on the Nexus Mods.
+
 <figure markdown="span" class="annotate">
   ![images](./images/no-metadata-updates.webp)
-  <figcaption>After making an unlisted mod, the user would have to copy 'site' and '1026' to their mod metadata before upload.</figcaption>
+  <figcaption>The `gamedomain` is 'site' and `modId` is '1026'.</figcaption>
 </figure>
+
+So the process of uploading a mod to the site is to actually make a blank mod page, that's unpublished (unlisted).
+Then you need to *visit the unpublished mod page*, and copy the `gamedomain` and `modId` from the URL.
+
+Afterwards, you need to go to your mod files, and paste in the relevant details, before finally
+archiving your mod and uploading it to your mod page.
+
+This is a very unintuitive process, and it is not clear to the user that they might need to do
+this for the mods to correctly support updates in some modding frameworks.
+
+***And if the user doesn't read the docs; that could mean broken mod updates.***
 
 ## How it's Currently Done
 
@@ -130,12 +147,10 @@ premium users to download it automatically.
 This usually involves having the communities running a bot that scrapes our site for mod metadata,
 and then they store it in their own database; exposting the information through their own API.
 
-Examples:
+One example of this is the [SMAPI Mod Database](https://smapi.io/). Another example is my own 
+[Reloaded-II Index](https://github.com/Reloaded-Project/Reloaded-II.Index/blob/main/AllPackages.json.br) (does not currently index Nexus Mods).
 
-- [SMAPI Mod Database](https://smapi.io/)
-- [Reloaded-II Index](https://github.com/Reloaded-Project/Reloaded-II.Index/blob/main/AllPackages.json.br) [does not currently index Nexus Mods].
-
-Technically users are *not* supposed to be doing this, but it is the only way to get
+Technically users are ***not*** supposed to be doing this, but it is the only way to get
 the required metadata for some modding frameworks. So we as Nexus Mods have just been
 looking the other way.
 
