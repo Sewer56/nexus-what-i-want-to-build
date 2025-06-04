@@ -91,69 +91,66 @@ These plugins are often unmaintained, become broken, and unsupported, *making ea
     - Limited game support/hardcoded games (especially `nxmhandler`)
     - Not user-friendly for average modders
 
-## Real Examples/Snippets
+## A Real Example: Why This Matters
 
-A lot of my past experiences have revolved around modding new games; treading new ground, reverse
+My past experiences have revolved around modding new games; treading new ground, reverse
 engineering games which have not had any sort of modding community or tools available before.
 
-For example:
+!!! example "An Example: Online Multiplayer Mod with Built-in Mod Support"
 
-!!! example "I've always wanted to make an Online Multiplayer mod with Built-in Mod Support"
-
-    In fact, a few years ago, [I kinda did that](https://github.com/Sewer56/Riders.Tweakbox).
+    A few years ago, [I built exactly this](https://github.com/Sewer56/Riders.Tweakbox) for Sonic Riders (2006).
 
     <figure markdown="span" class="annotate">
         ![images](./images/online-mp.webp)
-        <figcaption>That one time I added Online Multiplayer to Sonic Riders (2006).<br/>[Random Gameplay Footage](https://youtu.be/9NIgQZhru_g?t=169)<br/>
+        <figcaption>That one time I added Online Multiplayer to Sonic Riders (2006).<br/>[Random Alpha Gameplay Footage](https://youtu.be/9NIgQZhru_g?t=169)<br/>
         First ever PC code mod: all reverse engineering, netcode, from scratch by yours truly.</figcaption>
     </figure>
 
-Unfortunately, as things stand today, it is ***not possible*** to make a mod like this that
-integrates with Nexus Mods while providing a ***good user experience***.
+Unfortunately, today it's ***impossible*** to create an experience like this with Nexus Mods integration:
 
-1. Vortex *does not* have the features to support the desired experience.
-    - Mod configuration synchronization, APIs to pull mod info from a mod, automatic dependency resolution, etc.
-    - Even if it did, the UX would not be well suited.
-2. Not allowed a 'Mod Manager Download' button on Nexus Mods, ***because the game is not supported by Vortex.***
+1. **Vortex lacks the necessary features:** Mod configuration sync, APIs to pull mod info from mod manager, ask mod manager to restart game with specific set of mods, xplatform support, automatic dependency resolution etc.
+2. **No 'Mod Manager Download' button allowed for other software** because the game isn't Vortex-supported
 
-!!! warning "Therefore, all users must learn how to manually download and install all mods by hand."
+!!! warning "Result: All mods require manual installation"
 
-    And that is a barrier to entry, ***especially*** *if you want to play with less technical friends*.<br/>
-    Manual installation of mods is not only time-consuming, but also error-prone.<br/>
+    This creates a massive barrier to entry, ***especially for less technical friends***.<br/>
+    In this case, ***we failed to make free modding easy.***
 
-In this specific case, ***we failed to make free modding easy.***
+### The Third-Party Mod Manager Experience Gap
 
-### UX for installing Mods with 3rd Party Mod Managers is Lacking
-
-!!! note "I am also a Mod Manager author outside of the Nexus Mods App"
+!!! note "I am also a Modding Framework author outside of the Nexus Mods App"
 
     People use my modding framework with lesser known games, both on Nexus and elsewhere.
 
-***On Nexus only***, I have to ask users to install mods by dragging and dropping the mod archives
-*into my software's UI*, which then extracts the files to the correct location.
+    [Modding Framework: Mod Loader with Standardized Mod Format and Supporting Infrastructure]
 
-!!! info "This means that end users get an inferior experience 😔"
+The contrast is stark: ***on Nexus***, I must ask users to drag-and-drop mod archives into my
+software's UI for installation.
 
-    Compared to other websites which offer a '1 click download' button.
+!!! info "Which means the users get an inferior experience 😔"
 
     <figure markdown="span" class="annotate">
         ![images](./images/gb-1click.webp)
-        <figcaption>S</figcaption>
+        <figcaption>A `1 click` install button on a competitor's website.<br/>
+        Which I'm not allowed to have on Nexus.<br/>
+        Automatically attached to mods uploaded in the correct format.
+        </figcaption>
     </figure>
 
-However, end users are not familiar with this functionality, as they often skip reading the mod description,
-as well as the built-in tutorials.
+Users sometimes struggle—they skip mod descriptions and tutorials, leading to occasional ***"how do I install mods from Nexus?"*** questions.
 
-Leading to questions such as ***how to install mods sourced from Nexus Mods***.<br/>
-A '1 click download' button would help, but ***I am not able (allowed) to have that.***
+A simple 'Mod Manager Download' button would solve this instantly, but ***I'm not allowed to have one.***
 
-### Miscellaneous Note: Joining Lobbies with Friends
+I can't bring new users to Nexus in good conscience if I can't provide a ***good experience*** that matches
+my expectations.
+
+### Misc Note: Joining Lobbies with Friends
 
 !!! info "A bit off topic, but I thought I'd bring this up."
 
     As this is a problem that's been on my mind for years and I've never had an opportunity to properly voice it.
 
-!!! danger "Syncing Mods with Friends as a Free User Is a Nightmare"
+!!! danger "Syncing Mods with Friends as a Free User Is Difficult"
 
 Suppose you want to join a *friend's multiplayer lobby* and
 are missing some mods; so you need to sync up with them by downloading the same mods 
@@ -189,34 +186,104 @@ If the user is a free user, and they are missing 50 cosmetic mods, then for each
 - Click manual download button.
 - Wait 5 seconds.
 - Wait for download to finish.
-- ***Manually install the mod.***
+- *Manually install the mod.* (⚠️ Error Prone!!)
 
 Repeat for every mod.
 
-The problematic part is manual installation; which is not only time-consuming, but also
-error-prone. Because no program that isn't Vortex is allowed to have the 'Mod Manager Download' button,
-
 ## What I Want
 
-I want to build a solution that addresses both problems above:
+I want an improved system that allows the users to download mods to alternative mod managers,
+not just Vortex.
 
-### Goals
+Below are some ideas, not the exact implementation details, use those as reference rather than
+a strict specification.
 
-1. **Universal mod manager support:** Any mod manager should be able to register for the download button, not just Vortex
-2. **Smart routing:** Downloads should go to the most appropriate mod manager for each specific game
-3. **Cross-platform compatibility:** Should work on Windows, Linux, and macOS
-4. **User-friendly:** No command-line knowledge required
-5. **Game-specific preferences:** Users should be able to set different mod managers for different games
+### Minimal Criteria
 
-### Proposed Solution
+<figure markdown="span" class="annotate">
+    ![images](./images/mm-dropdown.webp)
+    <figcaption>A very rough sketch as an illustration.</figcaption>
+</figure>
 
-A cross-platform "NXM Handler" application that:
+A dropdown (or similar) beside the `Mod Manager Download` button that allows users to select
+a specific mod manager to send the download to.
 
-- Acts as a proxy between Nexus Mods downloads and your mod managers
-- Lets you configure which mod manager to use for each game
-- Provides a simple GUI for managing preferences
-- Works on all major operating systems
-- Supports any mod manager (not just Vortex)
+Clicking the buttons could/would open aliases of the `nxm://` protocol, such as:
 
-This would give users complete control over their modding workflow while maintaining the convenience of one-click downloads.
+- `mo2-nxm://` sends to Mod Organizer 2
+- `vortex-nxm://` sends to Vortex
+- `r2-nxm://` sends to Reloaded-II
 
+Mod managers could register themselves under these aliases such that the downloads will always
+be sent to the correct mod manager specified by the user.
+
+The button on the right would allow the user to set a 'default' such that the next time they visit
+the web page, the default manager is shown without needing to click the dropdown.
+
+### Automatic Association of Modding Framework Mods with Mod Managers
+
+!!! info "Mods using standardized modding frameworks should automatically be marked compatible with supporting Mod Managers."
+
+We can look through the structure of the uploaded files and in many cases determine which mod managers
+support downloading a specific mod.
+
+=== "Stardew Valley (SMAPI)"
+
+    ```
+    📁 SpaceCore
+        📁 docs
+            📄 README.md
+        📁 i18n
+            📄 default.json
+        📄 manifest.json
+        📄 SpaceCore.dll
+    ```
+
+    Every mod contains a `manifest.json` file that describes the mod and its metadata.
+
+=== "Bannerlord"
+
+    ```
+    📁 ImprovedGarrisons
+        📄 SubModule.xml
+        📁 bin
+            📁 Win64_Shipping_Client
+                📄 ImprovedGarrisons.dll
+    ```
+
+    Every mod contains a `SubModule.xml` file that describes the mod and its metadata.
+
+=== "Reloaded-II"
+
+    ```
+    📁 reloaded.sharedlib.hooks
+        📁 x64
+            📄 reloaded.sharedlib.hooks.dll
+        📄 Preview.png
+        📄 ModConfig.json
+    ```
+
+    Every mod contains a `ModConfig.json` file that describes the mod and its metadata.
+
+In these cases if we find an upload with a matching file structure, e.g. `<folder>/manifest.json` (or
+simply `manifest.json`) we can deduce that in the case of Stardew Valley, the mod is a `SMAPI` mod.
+
+Behind the scenes, we should tag the mod as `smapi`, and show `Mod Manager Download` buttons
+for all mod managers that support mods with the `smapi` tag.
+
+If tagging is done with tags on a per-game basis, then the probability of false positives is low.
+If it is done on a global basis, we would need more advanced [metadata parsing](./metadata-parsing.md).
+
+### Avoiding Spamming Mod Manager Options in UI
+
+!!! info "Some games may have multiple mod managers available."
+
+    In which case, you may want to filter which mod managers are shown in the dropdown.
+
+!!! note "Most games usually have 1/2 mod managers, so this is low priority."
+
+When a user logs in with a specific mod manager, the option to download with that mod manager should
+appear in the UI. Until then, we can hide (in some way) the other mod managers.
+
+We may choose to have an extra place to see what mod managers can be used, e.g. in an extra dropdown,
+or section of the dropdown; but that would be left to design team.

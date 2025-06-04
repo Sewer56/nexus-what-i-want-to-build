@@ -28,6 +28,9 @@ markdown_extensions:
   - md_in_html
   - attr_list
   - footnotes
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:
@@ -60,3 +63,4 @@ nav:
   - Home: index.md
   - Wishlist: 
       - Send Downloads to Specific Mod Manager: nxm-handler.md
+      - Metadata Parsing: metadata-parsing.md
