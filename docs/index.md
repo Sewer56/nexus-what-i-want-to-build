@@ -39,7 +39,7 @@ they are marked as the following:
 
 ### Pulling Apart Legacy Archive Formats (.zip)
 
-### Release Branches for Mod Pages
+### [Release Branches for Mod Pages](./release-branches.md)
 
 ### Flagging Mod Archives in Unexpected Formats
 
