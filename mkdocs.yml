@@ -67,3 +67,4 @@ nav:
       - External Notifications for Issue Tracker: issue-tracker.md
       - Batch Tiny File Downloads: tiny-file-downloads.md
       - Release Branches: release-branches.md
+      - Blob Storage: blob-storage.md

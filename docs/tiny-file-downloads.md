@@ -21,7 +21,7 @@ mod page individually.
 
 !!! info "Modern modding frameworks support comprehensive localisation systems"
 
-In my [Reloaded-III Specification](https://reloaded-project.github.io/Reloaded-III/), translations work through a modular system where:
+In my [Reloaded3 Specification](https://reloaded-project.github.io/Reloaded-III/), translations work through a modular system where:
 
 - **Users can change language for everything at once:** The mod manager, mod loader, mod configs, and all installed mods can switch languages simultaneously.
 - **Community-driven translations:** Any user can create and submit translations for any mod using the ["sideloading" system](https://reloaded-project.github.io/Reloaded-III/Common/Localisation/Adding-Localisations.html)
