@@ -229,3 +229,7 @@ a Premium account to scrape update metadata for each mod is not allowed.
 > Fetching data en-masse with the intent to rehost this information on your own service (i.e. scraping).
 
 Therefore, I could not host the update metadata myself.
+
+~~But the real reason is probably the fact I've been working on the successor for the past 2 years,
+every weekend; and as a single dev I just lack to resources to add new features to the project
+I'm working on replacing~~
