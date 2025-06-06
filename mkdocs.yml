@@ -1,8 +1,4 @@
-site_name: What could
-site_url: https://github.com/Reloaded-Project/Reloaded.MkDocsMaterial.Themes.R2
-
-repo_name: Reloaded-Project/Reloaded.MkDocsMaterial.Themes.R2
-repo_url: https://github.com/Reloaded-Project/Reloaded.MkDocsMaterial.Themes.R2
+site_name: What would Seweryn want to build?
 
 extra:
   social:
@@ -62,11 +58,14 @@ plugins:
 nav:
   - Home: index.md
   - Wishlist (Site Features): 
-      - Send Downloads to Specific Mod Manager: nxm-handler.md
-      - Automatic Metadata Parsing: metadata-parsing.md
-      - External Notifications for Issue Tracker: issue-tracker.md
-      - Batch Tiny File Downloads: tiny-file-downloads.md
-      - Release Branches: release-branches.md
-      - Blob Storage: blob-storage.md
-      - Communicate API Changes: communicate-api-changes.md
-      - Collections Support for non-Vortex Software: collections-for-external-software.md
+    - Send Downloads to Specific Mod Manager: nxm-handler.md
+    - Automatic Metadata Parsing: metadata-parsing.md
+    - External Notifications for Issue Tracker: issue-tracker.md
+    - Batch Tiny File Downloads: tiny-file-downloads.md
+    - Release Branches: release-branches.md
+    - Blob Storage: blob-storage.md
+    - Communicate API Changes: communicate-api-changes.md
+    - Collections Support for non-Vortex Software: collections-for-external-software.md
+  - Wishlist (Software):
+    - Lossless Texture Compression Library: dxt-lossless-transform.md
+    - NX2.0: nx2.0.md
