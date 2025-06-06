@@ -14,7 +14,7 @@
 
 Notifications need to be sent to an external service I'm expected to monitor; such as  
 Webhooks (Discord), Email, etc. without delay. I should not require to have
-`nexusmods.com` open in a browser tab 24/7 to catch notifications.
+[nexusmods.com](https://nexusmods.com) open in a browser tab 24/7 to catch notifications.
 
 My phone at 2am will not know that a user has reported an issue with a mod, *and that's no good!*
 

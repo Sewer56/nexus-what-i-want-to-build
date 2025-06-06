@@ -25,13 +25,16 @@ matter(1).
 
 ## A Demonstration
 
-!!! note "To demonstrate I'll use the most popular mod for the most popular game on nexusmods.com"
+!!! note "To demonstrate I'll use the most downloaded mod for the most popular game on [nexusmods.com](https://nexusmods.com)"
 
     This is [Skyrim 202X by Pfuscher](https://www.nexusmods.com/skyrimspecialedition/mods/2347?tab=files) for Skyrim Special Edition.
 
-The dataset consists of every single texture encoded with the BC1 format from from the mod's main downloads:
+I will test on a dataset containing every single texture encoded with the BC1 format from from the mod's main downloads(1):
+{ .annotate }
 
-- [-Skyrim 202X 10.0.1 - Architecture PART 1](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480708&game_id=1704). (9.0GB)
+1. The transforms for BC2, BC3, and BC7 are not yet ready for prime time. So I'm testing the completed one here!
+
+- [-Skyrim 202X 10.0.1 - Architecture PART 1](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480708&game_id=1704)
 - [-Skyrim 202X 10.0.1 - Landscape PART 2](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480709&game_id=1704)
 - [-Skyrim 202X 10.0.1 - Other PART 3](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480715&game_id=1704)
 
@@ -128,7 +131,7 @@ Including writing the blog posts, public API, documentation, and examples.
 
 ## The Benefits for Nexus Mods
 
-!!! info "I will once again use the most popular mod for the most popular game on nexusmods.com"
+!!! info "I will once again use the most downloaded mod for the most popular game on [nexusmods.com](https://nexusmods.com)"
 
     This is [Skyrim 202X by Pfuscher](https://www.nexusmods.com/skyrimspecialedition/mods/2347?tab=files) for Skyrim Special Edition.
 
@@ -309,8 +312,8 @@ Integration with popular mod managers:
 
 !!! info "Not MVP, can be done any time."
 
-GPU Decompression for BZip3 by integrating [libcubwt](https://github.com/IlyaGrebnov/libcubwt) for the Burrows-Wheeler Transform
-step of the compression algorithm.
+GPU Compression + Decompression for BZip3 by integrating [libcubwt](https://github.com/IlyaGrebnov/libcubwt)
+for the Burrows-Wheeler Transform step of the compression algorithm.
 
 This would allow users with 1Gbit+ connections to fully utilize their bandwidth as they download+extract
 mods at the same time. Otherwise they may be CPU constrained without a top end CPU.
