@@ -68,3 +68,5 @@ nav:
       - Batch Tiny File Downloads: tiny-file-downloads.md
       - Release Branches: release-branches.md
       - Blob Storage: blob-storage.md
+      - Communicate API Changes: communicate-api-changes.md
+      - Collections Support for non-Vortex Software: collections-for-external-software.md
