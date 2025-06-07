@@ -231,7 +231,7 @@ Taking into account the Skyrim 202X example, the space savings would be:
     So much so, that it was being requested after every release recently. We now added a quick, [hacky
     menu to the App to relocate where the App stores its archives](https://github.com/Nexus-Mods/NexusMods.App/pull/3328).
 
-## Deployment / Rollout
+## Deployment and Rollout
 
 !!! info "Current Development Status"
 

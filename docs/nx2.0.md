@@ -22,11 +22,11 @@ a variety of scenarios, from mod distribution, to direct game engine integration
 My goals with the Nx2.0 format encompass four primary use cases which I wish to achieve:
 
 - [**File Downloads**](#1-file-downloads): Getting files to end users faster. Reducing storage and bandwidth costs for websites.
-- [**Game Archive Format**](#2-as-a-game-archive-format): A replacement for legacy game archive formats, providing better performance and compression.
-- **Medium Term Archival**: Saving mod files for future use, like in the `Nexus Mods App`.
+- [**Medium Term Archival**](#2-medium-term-archival): Backups with instant restore, like in the `Nexus Mods App`.
+- [**Game Archive Format**](#3-as-a-game-archive-format): A replacement for legacy game archive formats, providing better performance and compression.
 - **Read Only FileSystem**: A piece of code that allows games to directly load assets from Nx2.0 archives.
 
-### 1. [File Downloads](#file-downloads)
+### 1. File Downloads
 
 !!! info "Nx2.0 is designed to supersede `.7z` as the de-facto best format for sharing mods."
 
@@ -360,62 +360,25 @@ These will be moved to the Nx2.0 documentation soon, and become a built-in featu
 We did a binary patch over a ~2GB game's native `.bfs` archive.
 Now the upgrade path from 1.5.0 to 1.5.1 is just a 138MB patch, rather than a 1300+MB full download.
 
-### 2. **As a game archive format**
+### 2. **Medium Term Archival** 
 
-!!! tip "Nx2.0 can be directly integrated into game engines as a native archive format."
+!!! info "For storing backups that need to be instantly restored, at will."
 
-    This is the second use case I want to achieve with Nx2.0.
+    You need a backup of some data, which then you need to restored later.
+    That restore operation needs to be as fast as humanly possible.
+    You need to extract 10s of gigabytes of mods in seconds, not minutes.
 
-!!! info "This is a personal goal of mine, not an 'MVP' sort of thing."
+    In other words, how the `Nexus Mods App` uses the original Nx1.0.
 
-    But rest assured, Nx2.0 will be better than the native archive formats of most AAA games.
-    That's a promise. 😉
+For this specific use case we use `ZStandard` compression, rather than the more expensive (slow)
+algorithms like `bzip3` or `LZMA`, which are more suitable for web distribution.
 
-Via code injection, we could add support for Nx2.0 archives to existing game engines,
-allowing them to read assets directly from the archive.
+This allows us to achieve the best possible tradeoff between speed and compression ratio
+that matches the needs of modern NVMe drives.
 
-That allows us to reap all of the benefits of Nx2.0, such as those listed above and below this section.
+#### Existing Nx1.0 Results
 
-In order to be suitable as a game archive format, Nx2.0 needs the following features:
-
-- **Fast Extraction**: Decompressing files should be fast, ideally faster than the storage drive speed.
-- **Parallel Decompression**: Multiple files should be decompressible in parallel to maximize CPU usage.
-- **Streaming Support**: Large files should be split into smaller chunks for partial reads and streaming.
-
-#### Fast Extraction
-
-!!! info "Nx2.0 supports ZStandard for its game-optimized, high-speed decompression solution."
-
-    ZStandard is a modern compression algorithm that provides excellent speed and compression ratios.
-
-    For real-time applications, like games, or where latency is key, like in the Nexus Mods App,
-    ZStandard is the best choice.
-
-Consider the existing Nx1.0 Archive Format I originally made for the App as a 'preview':
-
-| Threads | Speed       | Notes                                                |
-| ------- | ----------- | ---------------------------------------------------- |
-| 1       | 2.07 GiB/s  |                                                      |
-| 2       | 3.99 GiB/s  |                                                      |
-| 3       | 5.68 GiB/s  |                                                      |
-| 4       | 6.96 GiB/s  |                                                      |
-| 6       | 8.69 GiB/s  |                                                      |
-| -       | 9.27 GiB/s  | Max read speed of world's fastest PCI-E Gen 4.0 SSDs |
-| 8       | 9.93 GiB/s  | ~ 9800X3D, 7800X3D, 13600K (P-Cores)                 |
-| 12      | 13.74 GiB/s | ⚠️ Ryzen Memory Bottlenecks beyond here               |
-| 24      | 14.13 GiB/s |                                                      |
-| -       | 16.89 GiB/s | Current PCI-E Gen 5.0 SSDs                           |
-| -       | 19.55 GiB/s | Practical limit of PCI-E Gen 5.0 SSDs                |
-
-!!! note "Target speeds are [described here](https://sewer56.dev/sewer56-archives-nx/Research/DecodeSpeed/#decompress-speed-targets)."
-
-    Explanation in link. 
-
-    Essentially, the listings for 'world's fastest SSDs' assume a `0.7093` compression ratio, which is
-    the average for textures in one of my tested datasets. This means that we divide the theoretical
-    max speeds by `0.7093` to convert from drive's read speed (of compressed) to decompression speed.
-
-!!! info "Test Setup"
+!!! note "Test Setup"
 
     Dataset: All textures from Skyrim SE's 11 Most Popular Texture Mods.(1)
     { .annotate }
@@ -435,276 +398,351 @@ Consider the existing Nx1.0 Archive Format I originally made for the App as a 'p
     - Compression: `zstandard` level 16
     - Block Size: 16MiB
 
-The profile meant for game engine integration uses `ZStandard` compression, rather than the more expensive
-algorithms like `bzip3` or `LZMA`, which are more suitable for web distribution.
+Consider the benchmarks for Nx1.0 Archive Format I originally made for the App as a 'preview':
 
-It is worth noting here, that we have a situation where the world's fastest SSD is bottlenecking.
-In reality, very few users even have a PCI-E Gen 5.0 SSD, as these are very new and expensive.
-So, bottlenecking for most users will be at 8GB/s, not closer to 16GB/s.
+| Threads (9950X3D) | Speed (GiB/s)          | Notes                                         |
+| ----------------- | ---------------------- | --------------------------------------------- |
+| 1                 | 2.07                   |                                               |
+| 2                 | 3.99                   |                                               |
+| -                 | 2.35/4.37 (Read/Write) | World's fastest PCI-E Gen 4.0 NVMe            |
+| 4                 | 6.96                   |                                               |
+| -                 | 4.69/8.53 (Read/Write) | World's fastest PCI-E Gen 5.0 NVMe            |
+| 6                 | 8.69                   | ~[5700X, 12600K]                              |
+| 8                 | 9.93                   | ~[9800X3D, 7800X3D, 7700X, 9700X],            |
+| -                 | 11.49                  | ~[Zen3 w/ `>8 cores`: 5900X, 5950X], [12600K] |
+| -                 | 12.45                  | ~[13600K]                                     |
+| 12                | 13.74                  | ⚠️ DDR5 Ryzen Memory Bottlenecks here          |
+| 24                | 14.13                  |                                               |
+
+!!! note "Explanation for NVMe SSD Numbers Above"
+
+    We're making the following assumptions:
+    
+    - Same SSD as source and destination.
+    - 0.7093 compression ratio. (based on large texture dataset)
+
+    Resources are shared between read and write operations, due to limitations of PCI-E Bandwidth,
+    so the optimal read and write ratios are calculated as follows:
+
+    - Optimal Read Ratio calculated as `(0.7093 / 2)` == `0.35465`
+    - Optimal Write Ratio calculated as `(1s − (0.7093 / 2))` == `0.64535`
+
+    You multiply the advertised speed of the SSD by these ratios to get the optimal read and write speeds.
+    e.g. `7100MB/s * 0.35465s == 2.35GiB/s` read speed, and `7100MB/s * 0.64535 == 4.37GiB/s` write speed.
+
+#### Nx2.0 Improvements
+
+!!! info "Nx2.0 can leverage [dxt-lossless-transform](./dxt-lossless-transform.md) to improve size and performance even further."
+
+    As we can see above, when extracting files, the NVMe drives become a bottleneck.
+    With `dxt-lossless-transform`, the files become smaller, meaning we need to read less data from the drive.
+
+The Nexus Mods App uses ZStandard Level 9 for real-time recompression on mod downloads. 
+The improvement in compression ratio is 15.1% compared to the previous compressed file size with `dxt-lossless-transform`.
+
+This makes the new compression ratio `0.602`(1).
+{ .annotate }
+
+1. Derived as `0.7093 × 0.849` == `0.602`.
+
+| Write Speed (GiB/s) | Notes                                                 |
+| ------------------- | ----------------------------------------------------- |
+| 4.37                | [Old] World's fastest PCI-E Gen 4.0 NVMe drives       |
+| ***4.62***          | ***[New]*** World's fastest PCI-E Gen 4.0 NVMe drives |
+| 8.53                | [Old] World's fastest PCI-E Gen 5.0 NVMe drives       |
+| ***9.24***          | ***[New]*** World's fastest PCI-E Gen 5.0 NVMe drives |
+
+By having to read less from disk, *we can now use those remaining resources to write more, getting faster 'Apply'/'Extract' operations*.
+
+<figure markdown="span">
+  ![images](./images/skyrim-collections.webp)
+  <figcaption>And this would be very handy when deploying 100GB+ collections.</figcaption>
+</figure>
+
+And of course 😉, ***most importantly***, as the files are now smaller, users would now only need
+~85-87GB of disk space to download a collection where we may have previously used ~100GB.
+
+*That's a lot!*
+
+### 3. **As a game archive format**
+
+!!! tip "Nx2.0 can be directly integrated into game engines as a native archive format."
+
+    This is the second use case I want to achieve with Nx2.0.
+
+!!! info "This is a personal goal of mine, not an 'MVP' sort of thing."
+
+    But rest assured, Nx2.0 will be better than most AAA game archive formats(1).
+    { .annotate }
+    
+    1. I speak from experience, having reverse engineered many of them. 
+    
+    That's a promise. 😉
+
+Via code injection, we could add support for Nx2.0 archives to existing game engines,
+allowing them to read assets directly from the archive.
+
+#### Fast Load Times
+
+!!! info "Nx2.0 has a game-specific profile, which optimizes for load times."
+
+    It's very similar to the Nx1.0 profile for [Medium Term Archival](#2-medium-term-archival)
+    used in the App, but we don't need to recompress files as they're downloaded on the fly,
+    so we can spend a bit longer compressing.
+
+I'll reuse the Nx1.0 reference benchmarks from before, but with new targets for NVMe drives.(1)
+{ .annotate }
+
+1. This time we can use the full PCI-E bandwidth for reading data as we're not writing, so our calculations become simple. We just divide advertised speeds by the compression ratio (`0.7093`).
+
+| Threads (9950X3D) | Speed (GiB/s) | Notes                                                |
+| ----------------- | ------------- | ---------------------------------------------------- |
+| 1                 | 2.07          |                                                      |
+| 2                 | 3.99          |                                                      |
+| 4                 | 6.96          |                                                      |
+| 6                 | 8.69          | ~[5700X, 12600K]                                     |
+| -                 | 9.27          | Max read speed of world's fastest PCI-E Gen 4.0 SSDs |
+| 8                 | 9.93          | ~[9800X3D, 7800X3D, 7700X, 9700X]                    |
+| -                 | 11.49         | ~[Zen3 w/ `>8 cores`: 5900X, 5950X], [12600K]        |
+| -                 | 12.45         | ~[13600K]                                            |
+| 12                | 13.74         | ⚠️ DDR5 Ryzen Memory Bottlenecks here                 |
+| 24                | 14.13         |                                                      |
+| -                 | 16.89         | Current PCI-E Gen 5.0 SSDs                           |
+| -                 | 19.55         | Practical limit of PCI-E Gen 5.0 SSDs                |
+
+!!! note "High-End Consumer Gen 5.0 SSDs are still very recent"
+
+    As in '1 year old' recent. Very few people have them, as they're still fairly expensive and
+    generally not recommended by reviewers given that practical improvements are negligible.
+
+In that regard, all existing >=98% of users can take 100% advantage of their NVMe Gen <= 4.0 SSDs.
+
+#### Expected Nx2.0 Performance
+
+!!! tip "Don't forget [dxt-lossless-transform](./dxt-lossless-transform.md#unpack-performance)"
+
+    You may notice that in the table above, the drive is the bottleneck for Gen 4.0 SSDs,
+    not RAM or CPU.
+
+`dxt-lossless-transform` improves the compression ratio by 13-15% on average, which in turn means
+we have to read less data from the drive to get the same amount of data decompressed in RAM.
+
+Combined with the 15% improvement in general [load times](./dxt-lossless-transform.md#unpack-performance),
+we can go beyond the previous limits.
 
 !!! question "What does that mean?"
 
-Now, combine this with the 15% Improvement from the [DXT Lossless Transform](./dxt-lossless-transform.md#unpack-performance), 
-we can get around the I/O bottleneck. It is worth noting that very few users have a PCI-E Gen 5.0 SSD,
-as these are very new and expensive. So, in practice, any user with a mid-high end system will be able
-to max out their NVMe 4.0 SSDs.
+#### Nx2.0 is Competitive with DirectStorage
 
-### 1. **Read Only FileSystem** 
-Something suitable in a [reloaded redirector] / [usvfs] style project.
+!!! tip "Nx2.0 will produce load times competitive with DirectStorage."
 
-- Hooking NT / POSIX API calls to trick processes into reading files from another place
-- Except we're reading from an archive  
-- If we load/decompress on all threads, we load data faster, using less disk space
+    Faster for Gen 4.0 SSDs, a bit slower for Gen 5.0 SSDs.  
+    That may sound like a bold claim, but hear me out.
 
-### 3. **As a game archive format**
-Replace old games' native archives with the new format.
+There is a fairly common misconception that in DirectStorage data flows directly from the NVMe drive to the GPU,
+bypassing the CPU and RAM. [On Windows, that is false](https://github.com/microsoft/DirectStorage/blob/main/Docs/DeveloperGuidance.md#compressed-data-flow).
 
-- Through hooking, we can replace a native archive format with our own
-- For size, performance, and just because you can
-- Seamless integration with existing game engines
-
-### 4. **Medium Term Archival** 
-I want to save some mods on disk for future use.
-
-- Basically as a general purpose archive format
-- For non-[Reloaded3] software, to archive currently disabled mods to save disk space
-- The archive format extracts data so fast, extraction is as fast as your storage drive
-- So like 8GiB/s on a modern NVMe
-
-
-## The Problem
-
-!!! warning "Current mod distribution and storage is inefficient"
-
-    - Mod downloads are unnecessarily large, consuming excess bandwidth
-    - Internet speed is often the bottleneck in mod installation
-    - Archives are only extracted once the full file has been downloaded
-    - Mod managers waste disk space with redundant file storage
-    - CDN costs are inflated by duplicate file storage across mod versions
-
-Modern modding faces several critical challenges that existing archive formats fail to address effectively.
-
-
-
-## Technical Architecture
-
-!!! info "The Nx2.0 format uses a semi-SOLID block-based approach"
+Let's compare the loading of texture assets on a Gen 4.0 NVMe SSD with DirectStorage and Nx2.0:
 
 ```mermaid
-flowchart TD
-    subgraph Header
-        FileTable[File Table]
-        BlockTable[Block Table] 
-        CompressionInfo[Compression Info]
-    end
-    
-    subgraph Block2[Block 2 - Large Files]
-        BigTexture[large_texture.dds]
-    end
+flowchart LR
 
-    subgraph Block1[Block 1 - Medium Files]
-        Mesh1[character.mesh]
-        Mesh2[weapon.mesh]
-    end
-
-    subgraph Block0[Block 0 - Small Files]
-        Config[mod_config.json]
-        Metadata[metadata.xml]
-        Script[init.script]
-    end
-    
-    Header --> Block0
-    Header --> Block1  
-    Header --> Block2
+    SSD -. ~7GB/s .-> CPU+RAM
+    CPU+RAM -. ~24GB/s .-> VRAM-Compressed
+    VRAM-Compressed -. ~45GB/s .-> VRAM-Decompressed
 ```
 
-### Key Features
+<center>Loading with DirectStorage</center>
 
-- **SOLID Compression**: Groups small files together for maximum compression efficiency
-- **Independent Blocks**: Large files stored in separate blocks for parallel decompression
-- **Dictionary Compression**: Shared dictionaries across blocks for even better ratios
-- **Chunk-Based Access**: Large files split into chunks for partial downloads and streaming
-- **Header Optimization**: All metadata stored upfront for fast parsing
+```mermaid
+flowchart LR
 
-## Performance Characteristics
-
-!!! success "Nx2.0 delivers exceptional performance across all metrics"
-
-### Extraction Speed
-
-| Format    | Single Thread | Multi-Thread  | Notes                |
-| --------- | ------------- | ------------- | -------------------- |
-| ZIP       | 150 MB/s      | 150 MB/s      | No parallelization   |
-| 7Z        | 200 MB/s      | 400 MB/s      | Limited threading    |
-| **Nx2.0** | **800 MB/s**  | **8000 MB/s** | Full parallelization |
-
-### Compression Ratios
-
-Compared to traditional formats on a typical mod dataset:
-
-| Format    | Size    | Ratio    | Speed         |
-| --------- | ------- | -------- | ------------- |
-| ZIP       | 100%    | Baseline | Fast          |
-| RAR       | 75%     | -25%     | Slow          |
-| 7Z        | 70%     | -30%     | Very Slow     |
-| **Nx2.0** | **65%** | **-35%** | **Very Fast** |
-
-### Memory Usage
-
-- **Streaming Friendly**: Minimal memory footprint during extraction
-- **Predictable**: Memory usage scales linearly with block size
-- **Configurable**: Adjustable buffer sizes for different use cases
-
-## Integration with DXT Lossless Transform
-
-!!! tip "Nx2.0 + DXT Transform = Optimal texture storage"
-
-The Nx2.0 format includes native support for the [DXT Lossless Transform](./dxt-lossless-transform.md), providing:
-
-### Automatic Texture Optimization
-
-- **Detection**: Automatically identifies DXT compressed textures
-- **Transform**: Applies lossless transform during packing
-- **Restoration**: Seamlessly restores original format during extraction
-- **Transparency**: Process is completely transparent to end users
-
-### Real-World Benefits
-
-Using Skyrim 202X as an example:
-
-| Metric               | Traditional RAR | Nx2.0 + DXT | Improvement |
-| -------------------- | --------------- | ----------- | ----------- |
-| **Archive Size**     | 3.138 GB        | 2.437 GB    | -22.4%      |
-| **Extraction Speed** | 150 MB/s        | 1.7 GB/s    | +1033%      |
-| **Memory Usage**     | 512 MB          | 128 MB      | -75%        |
-
-## Use Case Scenarios
-
-### Mod Distribution Platforms
-
-!!! nexus "Perfect for platforms like Nexus Mods"
-
-**Benefits for Mod Sites:**
-- Reduced CDN storage costs through deduplication
-- Lower bandwidth usage
-- Faster user downloads
-- Better user experience
-
-**Benefits for Users:**
-- Smaller downloads
-- Faster installation
-- Resume interrupted downloads
-- Partial updates (only changed files)
-
-### Mod Managers
-
-!!! info "Designed with mod managers in mind"
-
-**For Developers:**
-- Simple, well-documented API
-- Cross-platform support (Windows, Linux, macOS)
-- Language bindings (C, C#, Python, JavaScript)
-- Streaming extraction capabilities
-
-**For Users:**
-- Instant mod activation/deactivation
-- Reduced disk space usage
-- Faster mod switching
-- Background optimization
-
-### Game Integration
-
-!!! tip "Replace legacy game archive formats"
-
-**Performance Gains:**
-- Faster asset loading
-- Reduced memory usage
-- Better streaming performance
-- Parallel asset decompression
-
-**Compatibility:**
-- Drop-in replacement for many formats
-- Transparent operation via hooking
-- No game modification required
-
-## Implementation Status
-
-| Component              | Progress | Status                    |
-| ---------------------- | -------- | ------------------------- |
-| **Core Format**        | 85%      | Nearly complete           |
-| **Compression Engine** | 90%      | ZStd + LZ4 implemented    |
-| **DXT Integration**    | 70%      | BC1/BC2/BC3 working       |
-| **C API**              | 40%      | Basic functions available |
-| **C# Bindings**        | 60%      | Used in Nexus Mods App    |
-| **Streaming Support**  | 30%      | Basic implementation      |
-| **Documentation**      | 50%      | Core docs written         |
-
-### Upcoming Milestones
-
-**Phase 1 (Next 2 months):**
-- Complete BC7 DXT transform integration
-- Finish streaming download implementation
-- Comprehensive test suite
-- Performance optimizations
-
-**Phase 2 (Following 1 month):**
-- Language binding completion
-- Documentation finalization
-- Real-world integration testing
-- Security hardening
-
-**Phase 3 (Final month):**
-- Ecosystem integration
-- Mod manager support
-- Production deployment
-- Community adoption
-
-## Getting Started
-
-!!! warning "Development Version"
-
-    Nx2.0 is currently in active development. APIs may change.
-
-### Basic Usage
-
-```rust
-// Pack files into Nx2.0 archive
-let settings = PackSettings {
-    compression: CompressionType::ZStd,
-    solid_blocks: true,
-    dxt_transform: true,
-    block_size: 16 * 1024 * 1024, // 16MB blocks
-};
-
-let archive = NxArchive::pack_from_directory("./mod_files", settings)?;
-archive.write_to_file("mod.nx")?;
-
-// Extract archive
-let archive = NxArchive::from_file("mod.nx")?;
-archive.extract_to_directory("./extracted")?;
+    SSD -. ~7GB/s .-> CPU+RAM
+    CPU+RAM -. ~15GB/s .-> CPU+RAM-Decompressed
+    CPU+RAM-Decompressed -. ~24GB/s .-> VRAM
 ```
 
-### Advanced Features
+<center>Loading with Nx2.0</center>
 
-```rust
-// Streaming extraction
-let mut archive = NxArchive::from_file("large_mod.nx")?;
-let file_stream = archive.open_file_stream("textures/big_texture.dds")?;
+By all means, you would imagine that DirectStorage is faster, right?
+***Well, not quite.*** Here's the gotcha.
 
-// Read in chunks
-let mut buffer = vec![0u8; 1024 * 1024]; // 1MB buffer
-while let Ok(bytes_read) = file_stream.read(&mut buffer) {
-    if bytes_read == 0 { break; }
-    // Process chunk
-}
+After all, the load operations above are like a conveyor belt,
+you're processing multiple files in multiple stages at once.
+
+```mermaid
+flowchart LR
+
+    SSD -. ~7GB/s .-> CPU+RAM
 ```
+
+<center>Which exposes a very clear bottleneck, the NVMe SSD.</center>
+
+And, well, ***in Nx2.0, textures are smaller than in DirectStorage***, why is that?
+
+In order to achieve fast decompression, DirectStorage splits data into very small chunks, which are then
+decompressed in parallel by the GPU. DirectStorage also uses `GDeflate`, which is less efficient
+than the `ZStandard` codec used in Nx2.0. Compression ratios suffer.
+
+In other words, to decompress the same amount of data, ***DirectStorage needs to read much more data from the SSD than Nx2.0 does***.
+And, because, for Gen4.0 drives, [even upper mid range CPUs can decompress fast enough to keep up](#fast-load-times), Nx2.0
+will achieve better load times than DirectStorage.
+
+!!! tip "That doesn't mean you shouldn't use DirectStorage."
+
+    I just thought it was an interesting comparison.
+
+    DStorage is likely faster on Gen 5.0 drives for the time being. In addition, if 
+    you have a use case where you need to dynamically stream in compressed textures
+    (e.g. new terrain in an open world game), then DirectStorage is the way to go 
+    as it relieves CPU load.
+
+### 4. **As a Read Only Virtual FileSystem** 
+
+!!! info "Something suitable in a [reloaded redirector] / [usvfs] style project."
+
+    In many mods we're unnecessarily losing out on Disk Space and Load Times.<br/>
+    I want to do better.
+
+#### Nexus Mods App: Improving Disk Space
+
+!!! info "In the Nexus Mods App, we store 2 copies of every file that is applied (active)"
+
+When we download mods in the App, each mod goes through the following steps:
+
+```mermaid
+flowchart LR
+
+    nexusmods.com -. Download @ 18MB/s .-> App
+    App -. Extract @ 110MB/s .-> EA[Extracted-Archive] 
+    EA -. 180MB/s Recompress .-> RA[Nx1.0 Archive]
+```
+
+<center>How it looks like, on a typical mid range machine.</center>
+
+We first download an archive, then we extract all the files, and lastly we re-compress them into the
+Nx1.0 format.
+
+The problem arises, when we 'Apply' the mods after they're enabled.
+
+```mermaid
+flowchart LR
+
+    RA["Nx1.0 Archive"] -. Extract @ 4GiB/s .-> Game["Game Directory"]
+```
+
+This is a straight extract operation.
+Meaning we now have 2 copies of every file in the game directory, a compressed copy in the Nx1.0 archive,
+and an uncompressed copy in the game directory.
+
+<figure markdown="span">
+  ![images](./images/skyrim-collections.webp)
+  <figcaption>This image (again) of most popular collections is a good indicator why it's a problem.</figcaption>
+</figure>
+
+Suppose the user installs `DOMAIN: An AE NSFW AIO` (323.4GB) download from Nexus Mods, and then applies
+it to their game. Our disk usage is going to be quite nasty:
+
+- `~350GB` for the compressed collection files.
+- `~500GB` for the uncompressed collection files in the game directory.
+
+That's... more than double of the collection size. Almost 1TB of disk space used for a single collection,
+that's very much not good.
+
+#### Reloaded-II: Improving Load Times
+
+!!! info "Mods in my Reloaded-II Framework rely on Virtual FileSystem (VFS) to load assets."
+
+    Mods for various games in Reloaded-II are loaded by hooking (injecting custom code) either into
+    Windows APIs or the game engine's file loading functions.
+
+I'll keep this short.
+A lot of Reloaded-II mods live as loose files in the `Reloaded-II/Mods/{ModName}` folder.
+
+That was some caveats:
+
+- We could be saving disk space by compressing the files.
+- We could be improving load times, as loading data from Nx is faster than uncompressed.
+- Loading many small files (on Windows) is painfully slow.
+
+That's about it. Refer to benchmarks above.
+
+#### The Ideal Solution
+
+!!! tip "Load the compressed data directly into the games, without extraction."
+
+    And that's what it's all about.
+
+Normally you get something like this:
+
+```mermaid
+flowchart LR
+
+    p[Game] -- Open File --> of[Operating System]
+```
+
+We want to do this:
+
+```mermaid
+flowchart LR
+
+    p[Game] -- Open File --> vfs[Nx VFS]
+    vfs -- Load File if not in Nx --> of[Operating System]
+```
+
+The VFS sits in the middle and does some magic 😇.
+
+```mermaid
+classDiagram
+
+    class `Mod Folder`
+    `Mod Folder` : data3.pak
+
+    class `Mod 2 Folder`
+    `Mod 2 Folder` : data4.pak
+
+    class `Real Game Folder`
+    `Real Game Folder` : data1.pak
+    `Real Game Folder` : data2.pak
+    `Real Game Folder` : game.exe
+
+    class `Virtual Game Folder [What Game Sees]`
+    `Virtual Game Folder [What Game Sees]` : data1.pak
+    `Virtual Game Folder [What Game Sees]` : data2.pak
+    `Virtual Game Folder [What Game Sees]` : data3.pak
+    `Virtual Game Folder [What Game Sees]` : data4.pak
+    `Virtual Game Folder [What Game Sees]` : game.exe
+
+    `Mod Folder` --|> `Virtual Game Folder [What Game Sees]`
+    `Mod 2 Folder` --|> `Virtual Game Folder [What Game Sees]`
+    `Real Game Folder` --|> `Virtual Game Folder [What Game Sees]`
+```
+
+!!! note "Performance is Key Here"
+
+    Nx2.0 is designed to be suitable for read-only virtual file systems, where seeking and unusual
+    file access patterns may occur.
+
+This is done with an adjustable 'block size'. Nx2.0 allows you to split files into smaller,
+more compressible blocks, which can be loaded independently. If you need to seek, you find the block
+containing the data you need, and then you decompress that block if it is not already decompressed.
+
+This is the same as how ZStandard compression works in filesystems like `btrfs`.
+
+!!! note "Another personal goal of mine."
+
+    `'NxVFS'` is a planned component of my [Reloaded3] modding framework project.
+
+    You can find the technical details in the [Virtual FileSystem](https://reloaded-project.github.io/Reloaded-III/Mods/Essentials/Virtual-FileSystem/About.html) and [File Emulation Framework](https://reloaded-project.github.io/Reloaded-III/Mods/Essentials/File-Emulation-Framework/About.html) sections.
 
 ## Roadmap
 
-!!! info "Please See [dxt-lossless-transform](./dxt-lossless-transform.md#deployment--rollout) roadmap."
+!!! info "Please See [dxt-lossless-transform](./dxt-lossless-transform.md#deployment-and-rollout) roadmap."
 
     As usual, if the reader thinks this would be beneficial for Nexus Mods, please offer me some patronage
     by allotting me extra time to work on this.
+
+I was going to make this page longer, than I noticed, it's already way too long, so let's stop here.
 
 [reloaded redirector]: https://reloaded-project.github.io/reloaded.universal.redirector/
 [usvfs]: https://github.com/ModOrganizer2/usvfs

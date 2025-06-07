@@ -57,6 +57,9 @@ plugins:
 
 nav:
   - Home: index.md
+  - Wishlist (Software):
+    - Lossless Texture Compression Library: dxt-lossless-transform.md
+    - Nx2.0 Archive Format: nx2.0.md
   - Wishlist (Site Features): 
     - Send Downloads to Specific Mod Manager: nxm-handler.md
     - Automatic Metadata Parsing: metadata-parsing.md
@@ -66,6 +69,3 @@ nav:
     - Blob Storage: blob-storage.md
     - Communicate API Changes: communicate-api-changes.md
     - Collections Support for non-Vortex Software: collections-for-external-software.md
-  - Wishlist (Software):
-    - Lossless Texture Compression Library: dxt-lossless-transform.md
-    - Nx2.0 Archive Format: nx2.0.md
