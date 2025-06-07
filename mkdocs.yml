@@ -60,6 +60,7 @@ nav:
   - Wishlist (Software):
     - Lossless Texture Compression Library: dxt-lossless-transform.md
     - Nx2.0 Archive Format: nx2.0.md
+    - A Better Modding Framework: reloaded3.md
   - Wishlist (Site Features): 
     - Send Downloads to Specific Mod Manager: nxm-handler.md
     - Automatic Metadata Parsing: metadata-parsing.md
