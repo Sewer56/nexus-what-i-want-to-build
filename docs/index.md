@@ -20,13 +20,13 @@ My work spans from low-level reverse engineering and performance optimization to
 
 !!! info "My Journey"
 
-    **From Gaming to Programming:** Started as a competitive gamer (was ranked #1 globally in Rocket League 1v1 in 2015), but transitioned to programming for sustainability and flexibility.
+    **From Gaming to Programming:** Started as a competitive gamer (was ranked #4 globally in Rocket League 1v1 in 2015 for a while), but transitioned to programming for sustainability and flexibility.
     
     **Early Development:** Began with Android ROM development at age 13, creating custom ROMs like Gin2JellyBean Extended and OxySlim. My first serious programming project was reverse engineering Sonic Heroes' object placement format in 2015.
     
     **Current Focus:** Building the next generation of modding infrastructure, including the [Reloaded3 Framework](https://reloaded-project.github.io/Reloaded-III/) and supporting ecosystem of libraries.
 
-**Why I do this:** Game modding was my gateway into programming. I learned by experimenting, breaking things, and creating tools for games I loved. I want to give others the same opportunity by reducing the barriers to entry for modding, especially for niche games without established communities.
+**Why I do this:** Game modding was my gateway into programming. I learned by experimenting, breaking things, and creating tools for games I loved. I want to give others the same opportunity by reducing the barriers to entry for modding, especially for niche games without established communities. I work every hour of every day to make the modding ecosystem better for everyone, whether it's through the Nexus Mods App, my own projects, or contributions to open source libraries.
 
 For more details about my background and projects, visit [sewer56.dev](https://sewer56.dev).
 
