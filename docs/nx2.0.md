@@ -24,7 +24,7 @@ My goals with the Nx2.0 format encompass four primary use cases which I wish to 
 - [**File Downloads**](#1-file-downloads): Getting files to end users faster. Reducing storage and bandwidth costs for websites.
 - [**Medium Term Archival**](#2-medium-term-archival): Backups with instant restore, like in the `Nexus Mods App`.
 - [**Game Archive Format**](#3-as-a-game-archive-format): A replacement for legacy game archive formats, providing better performance and compression.
-- **Read Only FileSystem**: A piece of code that allows games to directly load assets from Nx2.0 archives.
+- [**Read Only FileSystem**:](#4-as-a-read-only-virtual-filesystem) A piece of code that allows games to directly load assets from Nx2.0 archives.
 
 ### 1. File Downloads
 
