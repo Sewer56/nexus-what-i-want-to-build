@@ -99,9 +99,6 @@ The original mod author's `.rar` archive weighs in at a hefty 2.92GiB. ***Nx2.0 
 
 1. Remember, Nx2.0 can decompress archives as they are being downloaded, so users don't have to wait for the entire file to finish downloading. Therefore the improvement is greater than 22.3%.
 
-**Put simply:** Nx2.0 wouldn't just beat the current standards — it would demolish them, delivering substantial
-savings for both platforms and users while dramatically improving the download experience.
-
 #### Avoiding Duplicate files in Content Distribution Networks (CDNs)
 
 !!! info "Today, mod sites like Nexus Mods store many duplicate versions of the same file, incuding additional costs."
@@ -359,6 +356,210 @@ These will be moved to the Nx2.0 documentation soon, and become a built-in featu
 
 We did a binary patch over a ~2GB game's native `.bfs` archive.
 Now the upgrade path from 1.5.0 to 1.5.1 is just a 138MB patch, rather than a 1300+MB full download.
+
+#### Improved Authoring Experience for Mod Authors
+
+!!! warning "Managing large-scale mods can be a frustrating experience for mod authors"
+
+Let's again use the most popular mod for the most popular game on Nexus.
+
+We'll combine the full:  
+
+- [-Skyrim 202X 10.0.1 - Architecture PART 1](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480708&game_id=1704)
+- [-Skyrim 202X 10.0.1 - Landscape PART 2](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480709&game_id=1704)
+- [-Skyrim 202X 10.0.1 - Other PART 3](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480715&game_id=1704)
+
+archives into a single one to demonstrate the scale of the problem.
+
+**Combined Archive Stats:**
+
+- ***File Count***: 2,087
+- ***Size (Uncompressed):*** 31.7 GiB
+
+##### What Things Are Like Today
+
+!!! note "The current reality for mod authors is far from ideal."
+
+Let's get right into it, with results first.
+
+Here's how things look like on my home computer, creating a `.7z` archive, and uploading it to the web.
+
+| Format    | CPU     | Compressed Size | Compression Time | Upload Time @ 100Mbit/s | Total Time    |
+| --------- | ------- | --------------- | ---------------- | ----------------------- | ------------- |
+| LZMA (7z) | 9950X3D | 20.1GiB         | 12 min 1.29s     | 28 min 46.58s           | 40 min 48.87s |
+
+***However everyone has the luxury of the world's fastest consumer CPU and high upload speeds.***
+So let's add some recent hardware that our users are much more likely to have, with an average
+fixed landline internet connection.
+
+| Format    | CPU     | Compression Time Estimate | Upload Time @ 40Mbit/s | Total Time    | Notes                             |
+| --------- | ------- | ------------------------- | ---------------------- | ------------- | --------------------------------- |
+| LZMA (7z) | 7800X3D | ~ 22 min                  | 1h 11 min 56s          | ~1h 34min     | Most popular high end gaming CPU. |
+| LZMA (7z) | 7600X   | ~ 27 min 18s              | 1h 11 min 56s          | ~1h 39min 14s | Most popular CPU used by gamers.  |
+
+!!! note "Compression time is estimated based on built-in 7zip benchmark utility."
+
+    Scaled using [7-Zip Compression Benchmark Results](https://gamersnexus.net/cpus/amd-ryzen-9-9950x3d-cpu-review-benchmarks-vs-9800x3d-285k-9950x-more#9950x3d-production-benchmarks); which scales accurately with compression time in practice.
+
+Almost 2 hours, that's quite rough, isn't it?
+And that's what it's all about.
+
+***Compressing for web takes a very long time***. Large projects take long to compress, *and especially long* to upload.
+
+***Some mod authors split up their mods to avoid waiting***: Notice how the mod above has '3 parts'?
+Rather than endure long wait times, you will often see author break their mods into multiple archives. 
+This is inconvenient, for both authors and users, but it's the only way they can use to make things manageable.
+
+***Mod authors have to manually make upgrade paths, and many don't***: Creating upgrade paths between versions requires manual time consuming work.
+Most mod authors don't want to do that, ***especially after spending 2 hours making a release***. 
+
+As a result, mod authors experience pain, and end users have to download entire archives again for each update.
+
+##### Uploading a Mod for the First Time in Nx2.0
+
+!!! question "How would Nx2.0 make the upload experience better?"
+
+We'll start with the 'baseline' improvement, what is the experience with Nx2.0 compared to `.7z`?(1)
+{ .annotate }
+
+1. `.7z` is the current best legacy option
+
+Nx2.0 offers marginal improvements across the whole spectrum:
+
+- ***Compression is much faster***; reducing waiting times to have an archive ready for upload.
+- ***Archives are smaller***; meaning that users need to upload less data.
+
+Let's do a quick estimation 
+
+**Compression Performance:**
+
+| Format                           | CPU     | Compression Time | Improvement (Ratio) | Compressed Size | Improvement (Ratio) |
+| -------------------------------- | ------- | ---------------- | ------------------- | --------------- | ------------------- |
+| BZip3                            | 9950X3D | 6min 7.42s       | 5 min 53.87s (0.51) | 19.62GiB        | 0.976               |
+| BZip3 + [dxt-lossless-transform] | 9950X3D | ~6min 9s         | ~ 5 min 50s (0.51)  | 17.66GiB        | 0.879               |
+
+**Upload Performance:**
+
+| Format                           | Upload Time @ 100Mbit/s | Improvement (Ratio) |
+| -------------------------------- | ----------------------- | ------------------- |
+| BZip3                            | 28 min 5.3s             | 41.23s (0.976)      |
+| BZip3 + [dxt-lossless-transform] | 25 min 17.0s            | 3m 30s (0.879)      |
+
+**Combined:**
+
+| Format                           | Total Time   | Improvement (Ratio) |
+| -------------------------------- | ------------ | ------------------- |
+| BZip3                            | 34 min 12.8s | 6 min 36s (0.838)   |
+| BZip3 + [dxt-lossless-transform] | 31 min 39s   | 9 min 9s (0.775)    |
+
+Hey, ***that's almost 25% faster!***
+
+??? note "Result with `dxt-lossless-transform` is projected (expand for more info)."
+
+    Expected result, with ~2% margin of error on improvement in file size.
+
+    This is the result that's expected based on both the results of the existing BC1 implementation and the prior prior prototypes done on the `dxt-lossless-transform` project. Currently only BC1 is finalized. Prototype versions of BC2 and BC3 texture formats show similar improvements. I however don't know much BC7 will improve, it's too early to tell.
+
+And now let's scale those results to hardware and internet speeds that our users are more likely to have.
+
+**Performance on More Common Hardware @ 40Mbit/s Upload:**
+
+| Format            | CPU     | Compression Time | Upload Time @ 40Mbit/s | Total Time       | Improvement (Ratio)  |
+| ----------------- | ------- | ---------------- | ---------------------- | ---------------- | -------------------- |
+| BZip3             | 7800X3D | ~9min 59.26s     | 1h 10min 13.36s        | ~1h 20min 12.62s | 13min 47.38s (0.853) |
+| BZip3             | 7600X   | ~13min 54.04s    | 1h 10min 13.36s        | ~1h 24min 7.4s   | 15min 6.6s (0.847)   |
+| BZip3 + transform | 7800X3D | ~10min 1.84s     | 1h 3min 12.46s         | ~1h 13min 14.30s | 20min 45.7s (0.779)  |
+| BZip3 + transform | 7600X   | ~13min 57.63s    | 1h 3min 12.46s         | ~1h 17min 10.09s | 22min 3.91s (0.777)  |
+
+It is projected that for large mods full of textures (where ~90% of the file size in mods lives), the
+user will be able to complete the `archive` -> `upload` process ***22.3% faster*** (using 0.777x of the time)
+than with the current `.7z` format. For the `.zip` and `.rar` formats, the improvement is expected to be
+around 30%.
+
+!!! note "For non-texture data, the improvement here is negligible."
+
+    I've focused on textures here as that's where all the large archives are. In a typical mod setup,
+    you'll have a bunch of large texture archives, and many small non-texture archives. Textures
+    usually represent ~90% of disk space in a mod setup.
+
+    Non-texture mods are typically <100MiB in size, so the compress and upload times are not a problem
+    in user experience (~20 seconds total). This is why I've focused on where it's painful for mod authors
+    here.
+
+    For non-texture data, the optimal codec is usually so the worst case scenario for Nx2.0 with any data 
+    is equal to `7z` (the best case legacy scenario). 
+
+##### What If You're Making Mod Updates? (Software Edition)
+
+!!! info "What do you do is you want to update your mod?"
+
+    Nx2.0 has a nice built-in feature that allows you to construct new archives using previous
+    archives as a base.
+
+This feature already exists in Nx1.0, [(relevant changelog)](https://github.com/Nexus-Mods/NexusMods.Archives.Nx/releases/tag/0.6.4)
+and powers the 'Garbage Collector' feature of the Nexus Mods App.
+
+Suppose you're a mod author, and you're about to release a new version of your mod, like `10.0`.
+
+- [-Skyrim 202X 10.0](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=480483&game_id=1704)
+
+You can use the `.nx` archive for any previous version of the mod, such as:
+
+- [-Skyrim 202X 9.0](https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=321878&game_id=1704)
+
+To accelerate the process of creating the archive for `10.0`.
+
+*In this case, around 45% of the needed data is already present in the `9.0` archive.*
+
+I'll use the existing Nx1.0 archive format to demonstrate:
+
+| Format                                 | CPU     | Packing Time (ZStandard -22) | Notes                                         |
+| -------------------------------------- | ------- | ---------------------------- | --------------------------------------------- |
+| Nx1.0                                  | 9950X3D | 5min 4s                      | World's fastest consumer CPU.                 |
+| Nx1.0 w/ `9.0` Archive as 'reference'. | 9950X3D | 2min 54.2s                   | [on my actual hardware, with 5.0 drive]       |
+| Nx1.0                                  | 7800X3D | 8min 16s                     | ***[Estimate]*** Popular high end Gaming CPU. |
+| Nx1.0 w/ `9.0` Archive as 'reference'. | 7800X3D | 4min 42s                     | (assuming NVMe Gen 4.0 drive)                 |
+| Nx1.0                                  | 7600X   | 11min 30s                    | ***[Estimate]*** Typical mid range CPU.       |
+| Nx1.0 w/ `9.0` Archive as 'reference'. | 7600X   | 6min 29s                     | (assuming NVMe Gen 4.0 drive)                 |
+
+Because we were able to directly copy 45% of the data without compressing again, archive creation time was slashed.
+
+A minor/patch update like `10.0.0` -> `10.0.1` that updates 200MB of files only would on the other hand,
+take ~10 seconds, rather than 5-10 minutes.
+
+!!! note "An extra bonus"
+
+    And lastly, as per [Selective File Downloads](#selective-file-downloads), mod authors don't have to make
+    upgrade paths for the simple case manually anymore. So that's a bonus.
+
+##### Uploading Mod Updates
+
+!!! tip "It should be possible to upload only the unique data from Nx2.0 archives to `nexusmods.com`."
+
+    A superpower, possible with some support from the web team at Nexus, at least.
+
+Remember how we can [splice Nx2.0 archives?](#avoiding-duplicate-files-in-content-distribution-networks-cdns), and then
+in turn only download what we need?
+
+***That could also be applied to uploads.***
+Since the CDN would store 'blocks' of data, rather than full archives, it would be possible to
+upload only the new blocks of data, rather than the entire archive.
+
+**Upload Time Comparison:**
+
+Suppose you previously uploaded `9.0` and now are uploading `10.0`, the upload time is reduced to `0.55`,
+because 45% the data was already uploaded in version `9.0`.
+
+| Version             | Archive Size (7zip) | New Data | Upload Time @ 40Mbit/s | Ratio  | Notes                          |
+| ------------------- | ------------------- | -------- | ---------------------- | ------ | ------------------------------ |
+| **9.0 (Previous)**  | 20.1 GiB            | 20.1 GiB | 1h 11min 56s           | -      | First time upload              |
+| **10.0 (Overhaul)** | 11.0 GiB            | 11.0 GiB | ~39min 34s             | 0.55   | 45% data reused from 9.0       |
+| **10.0.1 (Hotfix)** | 11.0 GiB            | 200 MiB  | 41.9s                  | 0.0097 | Only 200MiB new data to upload |
+
+*Upload times are dramatically reduced when most data is already present in previous versions.*
+
+Getting a hotfix out in ***1 minute***, rather than ***2 hours*** is a game changer for mod authors.
+At least in my opinion.
 
 ### 2. **Medium Term Archival** 
 
@@ -747,3 +948,4 @@ I was going to make this page longer, than I noticed, it's already way too long,
 [reloaded redirector]: https://reloaded-project.github.io/reloaded.universal.redirector/
 [usvfs]: https://github.com/ModOrganizer2/usvfs
 [Reloaded3]: https://reloaded-project.github.io/Reloaded-III/
+[dxt-lossless-transform]: ./dxt-lossless-transform.md
