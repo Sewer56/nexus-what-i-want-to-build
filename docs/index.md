@@ -105,6 +105,13 @@ reinventing the wheel. Aims to standardize modding infrastructure across the ent
 Allow the "Mod Manager Download" button for games not supported by Vortex, enabling users of other
 mod managers to benefit from seamless downloads.
 
+#### [Download Queue for Cross-Device Modding](./nxm-handler-queue.md)
+
+**Status:** Unknown
+
+Enable queuing downloads from mobile devices or other computers to be processed by your main gaming
+setup, bridging the gap between mobile browsing and desktop modding.
+
 #### [Batch Tiny File Downloads](./tiny-file-downloads.md)
 
 **Status:** Unknown
