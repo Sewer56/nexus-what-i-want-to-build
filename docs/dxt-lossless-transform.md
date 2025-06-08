@@ -319,4 +319,4 @@ GPU Compression + Decompression for BZip3 by integrating [libcubwt](https://gith
 for the Burrows-Wheeler Transform step of the compression algorithm.
 
 This would allow users with 1Gbit+ connections to fully utilize their bandwidth as they download+extract
-mods at the same time. Otherwise they may be CPU constrained without a top end CPU.
+mods at the same time. Otherwise they may be CPU constrained without an >=12 core CPU.
