@@ -550,15 +550,23 @@ upload only the new blocks of data, rather than the entire archive.
 Suppose you previously uploaded `9.0` and now are uploading `10.0`, the upload time is reduced to `0.55`,
 because 45% the data was already uploaded in version `9.0`.
 
-| Version             | Archive Size (7zip) | New Data | Upload Time @ 40Mbit/s | Ratio  | Notes                          |
-| ------------------- | ------------------- | -------- | ---------------------- | ------ | ------------------------------ |
-| **9.0 (Previous)**  | 20.1 GiB            | 20.1 GiB | 1h 11min 56s           | -      | First time upload              |
-| **10.0 (Overhaul)** | 11.0 GiB            | 11.0 GiB | ~39min 34s             | 0.55   | 45% data reused from 9.0       |
-| **10.0.1 (Hotfix)** | 11.0 GiB            | 200 MiB  | 41.9s                  | 0.0097 | Only 200MiB new data to upload |
+| Version             | Archive Size | New Data (Ratio) | Upload Time @ 40Mbit/s | Notes                                                         |
+| ------------------- | ------------ | ---------------- | ---------------------- | ------------------------------------------------------------- |
+| **9.0 (Previous)**  | 15.99 GiB    | 15.99 GiB        | 57min 14s              | First time upload. Nx2.0 w/ dxt-lossless-transform (expected) |
+| **10.0 (Overhaul)** | 17.66 GiB    | 9.67 GiB (0.55)  | ~34min 36s             | 45% data reused from 9.0                                      |
+| **10.0.1 (Hotfix)** | 17.66 GiB    | 200 MiB (0.0097) | 41.9s                  | Only 200MiB new data to upload                                |
+
+Compare with the current status quo:
+
+| Version             | Archive Size | New Data | Upload Time @ 40Mbit/s | Notes                          |
+| ------------------- | ------------ | -------- | ---------------------- | ------------------------------ |
+| **9.0 (Previous)**  | 18.2 GiB     | 18.2 GiB | 1h 5 min 8s            | First time upload              |
+| **10.0 (Overhaul)** | 20.1 GiB     | 20.1 GiB | 1h 11 min 56s          | 45% data reused from 9.0       |
+| **10.0.1 (Hotfix)** | 20.1 GiB     | 20.1 MiB | 1h 11 min 56s          | Only 200MiB new data to upload |
 
 *Upload times are dramatically reduced when most data is already present in previous versions.*
 
-Getting a hotfix out in ***1 minute***, rather than ***2 hours*** is a game changer for mod authors.
+Getting a hotfix out in ***1 minute***, rather than ***1h 30m*** is a game changer for mod authors.
 At least in my opinion.
 
 ### 2. **Medium Term Archival** 
