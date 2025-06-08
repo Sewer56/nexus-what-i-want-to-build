@@ -62,7 +62,9 @@ nav:
     - Nx2.0 Archive Format: nx2.0.md
     - A Better Modding Framework: reloaded3.md
   - Wishlist (Site Features): 
-    - Send Downloads to Specific Mod Manager: nxm-handler.md
+    - Mod Manager Download Improvements:
+      - Send Downloads to Specific Mod Manager: nxm-handler.md
+      - Queue Downloads to Mod Manager: nxm-handler-queue.md
     - Automatic Metadata Parsing: metadata-parsing.md
     - External Notifications for Issue Tracker: issue-tracker.md
     - Batch Tiny File Downloads: tiny-file-downloads.md
