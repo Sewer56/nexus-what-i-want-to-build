@@ -117,7 +117,7 @@ setup, bridging the gap between mobile browsing and desktop modding.
 **Status:** Unknown
 
 Enable free users to download multiple small files (like translations) in batch, rather than visiting
-each mod page individually. Particularly important for comprehensive translation packages.
+each mod page individually. Particularly important for small modular translation packages.
 
 #### [Release Branches](./release-branches.md)
 
