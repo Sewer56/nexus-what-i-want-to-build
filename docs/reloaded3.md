@@ -13,7 +13,7 @@ App, e.g. some GOG integration details.
 
 !!! note "But I'll keep it short here."
 
-    Unfortunately, at this point I've spent 4 full days straight writing this little web page. 
+    Unfortunately, at this point I've spent 4.5 full days straight writing this little web page. 
 
     If I were to write this page, it would be the longest page of them all, by a lot.
     If you're curious about any details, feel free to ask me about it.
