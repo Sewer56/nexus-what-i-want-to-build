@@ -242,7 +242,7 @@ Taking into account the Skyrim 202X example, the space savings would be:
     I would very well welcome patronage in terms of 'company time' if you think Nexus Mods would
     benefit from this technology.
 
-The implementation will be rolled out in three distinct stages:
+Completion of the project would use the following stages. Estimations assume 32 hour weeks.
 
 ### Stage 1: Complete `dxt-lossless-transform` Project
 
@@ -279,7 +279,8 @@ The implementation will be rolled out in three distinct stages:
 
 !!! info "Only done on company time, if allowed to."
 
-    I got too many things to do and this does not personally benefit me.
+    I got too many things to do and this does not personally benefit me.<br/>
+    Same for Stage 4.
 
 **Guesstimate Timeline: ~2 weeks** (+ whatever time the web team needs.)
 
@@ -306,7 +307,9 @@ Integration with popular mod managers:
 - **Mod Organizer 2** - Popular community mod manager (especially for Bethesda games)
 - **Other managers** - If/As requested by community
 
-!!! success "Total Timeline: ~5-6 months for complete rollout"
+!!! success "Total Timeline: ~6 months for rollout for `dxt-lossless-transform` AND `nx2.0`"
+
+    ~Around 8-9 months at my current pace of spending my full weekends.
 
 ### Stage 5: Stretch Goals
 

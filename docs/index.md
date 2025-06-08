@@ -66,8 +66,8 @@ This technology could significantly reduce file sizes for texture-heavy mods whi
 
 !!! note "Textures represent ~90% of space used by mods"
 
-    This makes mods use up to 15% less space on disk, which translates to 15% faster downloads and
-    server resources used.
+    This reduces the size of that 90% by around 9-15%, which translates to faster downloads, less disk
+    space used and decreased operational costs for the website.
 
 ### [Nx2.0 Archive Format](./nx2.0.md)
 
@@ -85,7 +85,7 @@ Built to leverage modern storage hardware while being flexible enough for variou
 
 ### [A Better Modding Framework](./reloaded3.md)
 
-**Status:** In Progress (Own Project) • Estimated Completion: 2028
+**Status:** In Progress (Own Project) • Estimated Completion: 2028 (hopefully)
 
 A fully modular modding framework that provides everything needed to start modding any game without
 reinventing the wheel. Aims to standardize modding infrastructure across the entire ecosystem.
