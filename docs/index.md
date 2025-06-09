@@ -8,25 +8,40 @@ Having had a lot of thoughts for a long time, and never the proper time to compi
 take the time to list some of them here. 😉
 
 This is my own wishlist, some of the items here are things I have already started working on
-(alone, in my own time) and some are just ideas for the site itself that I think would be essential to have.
+(alone, in my own time) and some are just ideas for the site itself
+that I think would be essential to have.
+
+Having been a mod tool author for nearly a decade, the 
 
 ## About Me
 
-Hi, I'm Seweryn (aka Sewer56), a "full-stack modder" and open source library author working as one of the guys at the App Team.
+Hi, I'm Seweryn (aka Sewer56), a `"full-stack modder"` and open source library author working as one of the guys at the App Team.
+I'm probably one of the few people that can say I've worked on every aspect of modding: Libraries,
+Mod Loaders, Mod Managers, Modding Tools, Adding Online Multiplayer to Single Player games; you name it;
+sometimes I lose track of what I've done myself 😅.
+
 Depending on how Goddess of Fortune feels, we might get to talk tomorrow; or maybe it might be today, who knows 😛.
 
-I specialize in creating high-quality modding tools and utilities that help users and developers create game mods.
-My work spans from low-level reverse engineering and performance optimization to user-facing applications and modding frameworks.
+On the day to day basis, I specialize in creating high-quality modding tools and utilities that help
+users and developers create game mods. My work spans from low-level reverse engineering and performance
+optimization to user-facing applications and modding frameworks.
 
 !!! info "My Journey"
 
-    **From Gaming to Programming:** Started as a competitive gamer (was ranked #4 globally in Rocket League 1v1 in 2015 for a while), but transitioned to programming for sustainability and flexibility.
+    **From Gaming to Programming:** Started as a competitive gamer (e.g. was ranked #4 globally in Rocket League 1v1 in 2015 for a while),
+    but transitioned to programming for more flexibility and better long term prospects.
     
-    **Early Development:** Began with Android ROM development at age 13, creating custom ROMs like Gin2JellyBean Extended and OxySlim. My first serious programming project was reverse engineering Sonic Heroes' object placement format in 2015.
-    
-    **Current Focus:** Building the next generation of modding infrastructure, including the [Reloaded3 Framework](https://reloaded-project.github.io/Reloaded-III/) and supporting ecosystem of libraries.
+    **Early Development:** Always tinkered with stuff, e.g. overclocked CPU at 9, modified Stock Android ROMs at 13 as a 'power user'.
+    My first serious programming project was reverse engineering Sonic Heroes' object placement format in 2015.
 
-**Why I do this:** Game modding was my gateway into programming. I learned by experimenting, breaking things, and creating tools for games I loved. I want to give others the same opportunity by reducing the barriers to entry for modding, especially for niche games without established communities. I work every hour of every day to make the modding ecosystem better for everyone, whether it's through the Nexus Mods App, my own projects, or contributions to open source libraries.
+    **Current Focus:** Building the next generation of modding infrastructure, including the [Reloaded3 Framework](https://reloaded-project.github.io/Reloaded-III/) and supporting ecosystem of libraries to let mod authors focus on making the best possible mods.
+
+**Why I do this:** Game modding was my gateway into programming. I learned by experimenting, breaking things, and creating tools for games I loved.
+
+I want to give others the same opportunity by reducing the barriers to entry for modding, especially
+for niche games without established communities. I work every hour of every day to make the modding
+ecosystem better for everyone, whether it's through the Nexus Mods App, my own projects, or contributions
+to open source libraries.
 
 For more details about my background and projects, visit [sewer56.dev](https://sewer56.dev).
 
@@ -53,9 +68,14 @@ they are marked as the following:
 
 !!! tip "Personal projects I'm building in my spare time"
 
-    These are ambitious technical projects that would revolutionize the entire modding infrastructure.
+    These are ambitious technical projects that would revolutionize the entire modding infrastructure.<br/>
+    Each represents hundreds of hours of weekend development work (~30 hours a weekend).
 
-    Each represents hundreds of hours of weekend development work.
+Below are the ones I'm working on at this very moment, which would also benefit Nexus Mods.<br/>
+I figured I'd put those first as it would give you the idea on the sort of things I specialize in(1).
+{ .annotate }
+
+1. (It's usually bleeding edge tech)
 
 ### [Lossless Texture Compression Library](./dxt-lossless-transform.md)
 
@@ -78,17 +98,23 @@ Built to leverage modern storage hardware while being flexible enough for variou
 
 **Key Features:**
 
-- File deduplication across mod versions: Don't store same file multiple times on CDN!
-- Selective file downloads: Download only the files you need, not the entire mod archive
-- Delta updates: Download only the changed bytes between mod versions.
-- Optimized for both web distribution and local storage
+- ***File deduplication*** across mod versions: Don't store same archived files multiple times on Nexus Servers!
+- ***Selective file downloads***: Download only the files you need, not the entire mod archive, *for any mod*.
+- ***Delta updates***: Download only the changed bytes between mod versions.
+- ***Streaming support***: Stream assets directly from the archive without fully extracting them.
+- ***Improved Mod Author Experience***: Archive and upload mods in a literal fraction of the time compared to current formats.
+- ***Optimized for a variety of use cases centered around modding***: Web Distribution, Game Asset Loading, Virtual FileSystem (VFS) etc.
 
 ### [A Better Modding Framework](./reloaded3.md)
 
-**Status:** In Progress (Own Project) • Estimated Completion: 2028 (hopefully)
+**Status:** In Progress (Own Project) • Estimated Completion: 2028-2029 (hopefully)
 
 A fully modular modding framework that provides everything needed to start modding any game without
-reinventing the wheel. Aims to standardize modding infrastructure across the entire ecosystem.
+reinventing the wheel. Aims to standardize modding infrastructure and bring revolutionary tech
+across the entire modding ecosystem. (For every modder!)
+
+The two projects above (and others, not named here) are parts of the larger
+[Reloaded3](https://reloaded-project.github.io/Reloaded-III/) project.
 
 ## Site Feature Requests
 
