@@ -69,12 +69,13 @@ Against existing uploaded file:
 !!! info "Comparing with the Nx2.0 expected file size"
 
     Measurement was done by doing the transform on the original files,
-    splitting the input into blocks using the Nx code and then compressing the blocks with bzip3.
+    splitting the input into blocks using the Nx code written so far and then compressing the blocks
+    with bzip3. This represents an accurate representation of how the data will be packed.
 
 | Approach                   | Format                         | Size     | Ratio | Notes                                        |
 | -------------------------- | ------------------------------ | -------- | ----- | -------------------------------------------- |
 | As uploaded by mod author. | `.rar` (proprietary)           | 3.138 GB | 0.672 | As hosted on Nexus Mods                      |
-| Nx2.0 Archive (WIP)        | bzip3 + dxt-lossless-transform | 2.437 GB | 0.584 | Expected file size for Nx2.0 archive format. |
+| Nx2.0 Archive              | bzip3 + dxt-lossless-transform | 2.437 GB | 0.584 | Expected file size for Nx2.0 archive format. |
 
 The numbers come from the test suite and are *100% accurate* (~0.1% margin), ***not wild estimations***.
 
