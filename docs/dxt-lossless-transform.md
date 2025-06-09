@@ -64,7 +64,7 @@ Against existing uploaded file:
 
 409.2MB saved. File is 86.9% of the original compressed size after transform (13.1% smaller than the original RAR archive).
 
-#### Vs Nx 2.0
+#### With Nx 2.0
 
 !!! info "Comparing with the Nx2.0 expected file size"
 
