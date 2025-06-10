@@ -2,7 +2,7 @@
 
 !!! question "What would you build if you had a magic wand?"
 
-    *Is what the Chosen Ones said.*
+    Is the question of the day!
 
 Having had a lot of thoughts for a long time, and never the proper time to compile them, I might just
 take the time to list some of them here. 😉
@@ -11,7 +11,7 @@ This is my own wishlist, some of the items here are things I have already starte
 (alone, in my own time) and some are just ideas for the site itself
 that I think would be essential to have.
 
-Having been a mod tool author for nearly a decade, the 
+Having been a mod tool author for nearly a decade, the se are the main things that come to mind.
 
 ## About Me
 
@@ -19,8 +19,6 @@ Hi, I'm Seweryn (aka Sewer56), a `"full-stack modder"` and open source library a
 I'm probably one of the few people that can say I've worked on every aspect of modding: Libraries,
 Mod Loaders, Mod Managers, Modding Tools, Adding Online Multiplayer to Single Player games; you name it;
 sometimes I lose track of what I've done myself 😅.
-
-Depending on how Goddess of Fortune feels, we might get to talk tomorrow; or maybe it might be today, who knows 😛.
 
 On the day to day basis, I specialize in creating high-quality modding tools and utilities that help
 users and developers create game mods. My work spans from low-level reverse engineering and performance
