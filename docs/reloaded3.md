@@ -9,14 +9,13 @@ to start modding any new game ***in the best way possible***; without compromise
 
 The [Lossless Texture Compression](./dxt-lossless-transform.md) and [Nx2.0 Archive Format](./nx2.0.md)
 projects are part of this larger ordeal. Likewise, some Reloaded3 research was also used to build parts of the
-App, e.g. some GOG integration details.
+App, e.g. some GOG integration details, overall design of some more minor features.
 
 !!! note "But I'll keep it short here."
 
-    Unfortunately, at this point I've spent 4.5 full days straight writing this little web page. 
-
     If I were to write this page, it would be the longest page of them all, by a lot.
-    If you're curious about any details, feel free to ask me about it.
+    If you're curious about any details, feel free to ask me about it, but having spent 40+ hours
+    writing these little pages, time is not on my side right now.
 
 ## The Premise
 

@@ -72,3 +72,4 @@ nav:
     - Blob Storage: blob-storage.md
     - Communicate API Changes: communicate-api-changes.md
     - Collections Support for non-Vortex Software: collections-for-external-software.md
+    - Miscellaneous: misc.md

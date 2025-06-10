@@ -198,11 +198,11 @@ simply a means to fetch tiny files via regular API like a Premium user would.
 
 ------------
 
-## Real Life Example: Checking for Updates
+## Real Life Example: Checking for Updates in Reloaded-II
 
 !!! info "Up until now, I could never add update checking to my modding framework for mods hosted on Nexus."
 
-    Without breaking the Terms of Service anyway, which would be a bad example for an employee to set.
+    Without breaking the Terms of Service anyway, *which would be a bad example for an employee to set.*
 
 In my current [Reloaded-II](https://reloaded-project.github.io/Reloaded-II/) Framework [(wiki)](https://reloaded-project.github.io/Reloaded-II/)
 uploaded mod packages look something like this:
@@ -223,13 +223,16 @@ each of the other files on the mod page (their versions, unique mod IDs, etc.) i
 A free user is not able check for mod updates as they are not allowed to download the
 `ReleaseMetadata.json.br` file without visiting the website.
 
-Under our [Acceptable Use Policy](https://help.nexusmods.com/article/20-acceptable-use-policy), using
-a Premium account to scrape update metadata for each mod is not allowed.
+### Can you not self host the metadata?
 
-> Fetching data en-masse with the intent to rehost this information on your own service (i.e. scraping).
+!!! info "Under our [Acceptable Use Policy](https://help.nexusmods.com/article/20-acceptable-use-policy), usinga Premium account to scrape update metadata for each mod is not allowed."
 
-Therefore, I could not host the update metadata myself.
+    > Fetching data en-masse with the intent to rehost this information on your own service (i.e. scraping).
 
-~~But the real reason is probably the fact I've been working on the successor for the past 2 years,
-every weekend; and as a single dev I just lack to resources to add new features to the project
-I'm working on replacing~~
+The other reason is I'm simply working on Reloaded3 and as a single dev I lack the resources 😅; 
+as Nexus Mods integration would require:
+
+- `Inter Process Communication (IPC)` to pass info for `nxm://` links to primary process.
+- `Login & Session Management` for premium users to access their downloads.
+- `Scraping the Website` to fetch mod metadata and update information for free users.
+- `A complete UI overhaul` to allow free users to download updates from the Nexus; since previous UIs assume the user can download visiting a website.

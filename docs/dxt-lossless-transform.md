@@ -23,6 +23,9 @@ matter(1).
 
 !!! tip "[You can learn more on a blog series I started this year.](https://sewer56.dev/blog/category/texture-compression-in-nx20.html)"
 
+    The [first part](https://sewer56.dev/blog/2025/01/05/shrinking-old-game-texture-sizes-by-10-at-60gbs.html) of the series talks
+    about a *prototype* (working proof of concept) of the final transform sequence.
+
 ## A Demonstration
 
 !!! note "To demonstrate I'll use the most downloaded mod for the most popular game on [nexusmods.com](https://nexusmods.com)"
@@ -47,20 +50,21 @@ File stats:
 
 !!! note "These are 'Preview Numbers'"
 
-    I don't have code for the `rar` or `LZMA` codecs in my benchmark suite, so these use the default.
-    Namely a 'two pass' optimization is disabled.
-    
-    Final numbers will be slightly better. By 'slightly better', we're talking `13.5% better` instead of `13.1% better`. 
+    I don't have code for the `rar` or `LZMA` codecs in my benchmark suite, so these use the default `dxt-lossless-transform` setting.<br/>
+    Normally with the library you'd do a 'two pass' optimization to determine the best transform for each file,
+    which would yield 'slightly better' results.<br/>
+
+    By 'slightly better', we're talking `13.5% smaller` instead of `13.1% smaller` than original file. 
 
 #### Vs Original Files
 
 Against existing uploaded file:
 
-| Approach                    | Format                            | Size     | Ratio | Notes                                                        |
-| --------------------------- | --------------------------------- | -------- | ----- | ------------------------------------------------------------ |
-| Uncompressed                |                                   | 4.668 GB | 1.000 |                                                              |
-| As uploaded by mod author.  | `.rar` (proprietary)              | 3.138 GB | 0.672 | As hosted on Nexus Mods                                      |
-| with dxt-lossless-transform | `.rar` + `dxt-lossless-transform` | 2.729 GB | 0.584 | 'Preview'. Not using full optimizations, code not ready yet. |
+| Approach                    | Format                            | Size     | Ratio | Notes                                       |
+| --------------------------- | --------------------------------- | -------- | ----- | ------------------------------------------- |
+| Uncompressed                |                                   | 4.668 GB | 1.000 |                                             |
+| As uploaded by mod author.  | `.rar` (proprietary)              | 3.138 GB | 0.672 | As hosted on Nexus Mods                     |
+| with dxt-lossless-transform | `.rar` + `dxt-lossless-transform` | 2.729 GB | 0.584 | 'Preview'. Not using two-pass optimization. |
 
 409.2MB saved. File is 86.9% of the original compressed size after transform (13.1% smaller than the original RAR archive).
 
@@ -70,12 +74,12 @@ Against existing uploaded file:
 
     Measurement was done by doing the transform on the original files,
     splitting the input into blocks using the Nx code written so far and then compressing the blocks
-    with bzip3. This represents an accurate representation of how the data will be packed.
+    with bzip3. This represents *an accurate* representation of the final file size.
 
-| Approach                   | Format                         | Size     | Ratio | Notes                                        |
-| -------------------------- | ------------------------------ | -------- | ----- | -------------------------------------------- |
-| As uploaded by mod author. | `.rar` (proprietary)           | 3.138 GB | 0.672 | As hosted on Nexus Mods                      |
-| Nx2.0 Archive              | bzip3 + dxt-lossless-transform | 2.437 GB | 0.584 | Expected file size for Nx2.0 archive format. |
+| Approach                   | Format                         | Size     | Ratio | Notes                                                   |
+| -------------------------- | ------------------------------ | -------- | ----- | ------------------------------------------------------- |
+| As uploaded by mod author. | `.rar` (proprietary)           | 3.138 GB | 0.672 | As hosted on Nexus Mods                                 |
+| Nx2.0 Archive              | bzip3 + dxt-lossless-transform | 2.437 GB | 0.584 | 'Preview'. Expected file size for Nx2.0 archive format. |
 
 The numbers come from the test suite and are *100% accurate* (~0.1% margin), ***not wild estimations***.
 
@@ -91,7 +95,7 @@ File is 77.6% of the original compressed size after transform (23.4% smaller tha
 
     1. A file is stored on the Nexus servers only once, even across mod updates.
           - Currently we duplicate files across mod updates, which is very wasteful.
-          - Cost savings for Nexus Mods!!
+          - Cost savings for Nexus Mods! More on this later.
     2. When updating mods, we can skip downloading files that haven't changed.
           - This is a big deal, as it saves massive bandwidth.
     3. We can also make 'deltas' (binary patches), from old to newer versions.
@@ -112,7 +116,7 @@ File is 77.6% of the original compressed size after transform (23.4% smaller tha
 
 !!! note "The transform speed is also ~23.6GiB/s, so it's 'free' at compression time."
 
-    And around 500MiB/s per thread if using the two-pass optimization.
+    And around 250MiB/s per thread if using the two-pass optimization.
 
 ## Current Project Status
 
@@ -236,8 +240,8 @@ Taking into account the Skyrim 202X example, the space savings would be:
 
 !!! info "Current Development Status"
 
-    As is, I am working on this project and Nx2.0 every hour of every weekend as a means
-    of improving the modding ecosystem.
+    As is, I am working on this project and [Nx2.0](./nx2.0.md) every hour of every weekend as a means
+    of improving the overall modding ecosystem.
     
     That said, because this introduces very unhealthy work habits (likely worse than Robin's),
     I would very well welcome patronage in terms of 'company time' if you think Nexus Mods would
@@ -252,11 +256,13 @@ Completion of the project would use the following stages. Estimations assume 32 
 - Finalize BC1 optimizations and public API
 - Complete BC2 and BC3 wrapper & optimized code paths  
 - Implement BC7 transform (most complex format)
-- Write comprehensive documentation and examples
+- Write usage documentation and examples
+    - The projects themselves already have a lot of documentation on the code, but there isn't anything
+      end user facting such as a 'how to use' guide.
 
-### Stage 2: Complete `nx2.0` Project  
+### Stage 2: Complete [nx2.0](./nx2.0.md) Project  
 
-**Guesstimate Timeline: 3 weeks (core) + 6-10 weeks (additional features)**
+**Guesstimate Timeline: 4 weeks (core) + 4-8 weeks (additional features)**
 
 !!! info "The [Nx2.0 Archive Format](https://sewer56.dev/sewer56-archives-nx/) is already over 50% complete"
 
@@ -265,16 +271,18 @@ Completion of the project would use the following stages. Estimations assume 32 
 - Rework header format to include codec info for `dxt-lossless-transform` and future codecs
 - Update code to use new section in header format.
 - Port final pack/unpack code from Nx1.0 with improvements (new features).
+
+**Additional Features (4-8 weeks):**
+
+- C API for cross-language compatibility
+- Friendly C# bindings for .NET applications (including App)
+- Dictionary compression for better compression ratios
 - Fuzz testing against exploits.
     - Need to make archive bulletproof against malformed archives, since we'd be uploading these to the web.
     - We can't have security exploits here 😉
+- Anything extra that comes up during development.
 
-**Additional Features (6-10 weeks):**
-
-- C API for cross-language compatibility
-- C# bindings for .NET applications  
-- Download + Extract simultaneously feature
-- Dictionary compression for better compression ratios
+Around 4 weeks really, rest is 'buffer time' for unexpected issues, additional testing, etc.
 
 ### Stage 3: Ecosystem Integration: Nexus Mods
 
@@ -293,8 +301,8 @@ This means that the Nexus Mods servers would, in the case of mod updates, avoid 
 the same unique files multiple times, and instead store them only once.
 
 e.g. Today if `wood.dds` appears in `Skyrim 202X 9.0.1` and `Skyrim 202X 10.0.1`, it would be stored
-twice on our servers. Possibly more times if in other versions. With the Nx2.0 archive format,
-it would be stored only once; saving us operational costs and bandwidth.
+twice on our servers. Possibly more times if in other versions. [With the Nx2.0 archive format,
+it would be stored only once; saving us operational costs and bandwidth](./nx2.0.md#avoiding-duplicate-files-in-content-distribution-networks-cdns).
 
 ### Stage 4: Ecosystem Integration
 
@@ -305,12 +313,13 @@ Integration with popular mod managers:
 - **Vortex** - Official current mod manager
 - **Nexus Mods App** - Nexus' upcoming mod manager
     - Should be an easy port, as it already uses the Nx1.0 archive format.
-- **Mod Organizer 2** - Popular community mod manager (especially for Bethesda games)
+- **Mod Organizer 2** - Popular community mod manager (especially for Bethesda games, ~40% of site downloads)
 - **Other managers** - If/As requested by community
 
 !!! success "Total Timeline: ~6 months for rollout for `dxt-lossless-transform` AND `nx2.0`"
 
     ~Around 8-9 months at my current pace of spending my full weekends.
+    Minus any breaks I may take.
 
 ### Stage 5: Stretch Goals
 
@@ -320,4 +329,9 @@ GPU Compression + Decompression for BZip3 by integrating [libcubwt](https://gith
 for the Burrows-Wheeler Transform step of the compression algorithm.
 
 This would allow users with 1Gbit+ connections to fully utilize their bandwidth as they download+extract
-mods at the same time. Otherwise they may be CPU constrained without an >=12 core CPU.
+mods at the same time. Otherwise they may be CPU constrained without an >=12 core CPU if on a gigabit connection.
+
+The BWT represents over half of the decompression time for the BZip3 algorithm, GPU acceleration there
+improves over CPU by a factor of over 10x. (For reference: 2017 1080Ti was 8x faster than 12 core 5900X (from 2020))
+
+GPU accelerated decompression likely allow even low-mid powered laptops to go into >1 gigabit territory.

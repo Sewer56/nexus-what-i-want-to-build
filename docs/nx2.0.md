@@ -4,13 +4,14 @@
 
 !!! info "A next-generation archive format designed for high-performance mod distribution and asset loading"
 
-    [GitHub Repository](https://github.com/Sewer56/sewer56-archives-nx) | Around 50% done.
+    [GitHub Repository](https://github.com/Sewer56/sewer56-archives-nx) | [About Page](https://sewer56.dev/sewer56-archives-nx/) Around 50% done.
 
 Nx2.0 is a modern, high-performance file format specifically designed for the unique needs of modding games.
 
-It is the successor to the Nx1.0 format, that I originally made in 2023 for the Nexus Mods App.
-Nx2.0 expands on Nx1.0 by opening it up to a wider range of use cases; something I envisioned for the
-format from the start but never got the opportunity to perfect.
+It is the successor to the [Nx1.0 format](https://nexus-mods.github.io/NexusMods.Archives.Nx/), that I originally made in 2023 for the Nexus Mods App.
+
+Nx2.0 expands on 1.0 by opening it up to a wider range of use cases; something I envisioned for the
+format from the start but never got the opportunity to go through with the first time.
 
 The format exploits strengths of modern storage hardware, while being flexible enough to be used in
 a variety of scenarios, from mod distribution, to direct game engine integration.
@@ -24,7 +25,7 @@ My goals with the Nx2.0 format encompass four primary use cases which I wish to 
 - [**File Downloads**](#1-file-downloads): Getting files to end users faster. Reducing storage and bandwidth costs for websites.
 - [**Medium Term Archival**](#2-medium-term-archival): Backups with instant restore, like in the `Nexus Mods App`.
 - [**Game Archive Format**](#3-as-a-game-archive-format): A replacement for legacy game archive formats, providing better performance and compression.
-- [**Read Only FileSystem**:](#4-as-a-read-only-virtual-filesystem) A piece of code that allows games to directly load assets from Nx2.0 archives.
+- [**Read Only FileSystem**:](#4-as-a-read-only-virtual-filesystem) Code that allows any modded game to directly load assets from Nx2.0 archives as if they were on disk.
 
 ### 1. File Downloads
 
@@ -77,7 +78,6 @@ mine to the mix, makes textures more compressible without loss in quality(1).
 
 | Algorithm                            | Size     | Ratio  |
 | ------------------------------------ | -------- | ------ |
-| LZMA (7z) + dxt-lossless-transform   | 2.40 GiB | 55.27% |
 | BZip3 (bz3) + dxt-lossless-transform | 2.27 GiB | 52.21% |
 
 **The results speak for themselves:** while legacy formats top out at 2.49GiB with LZMA (7z), 
@@ -92,8 +92,8 @@ The original mod author's `.rar` archive weighs in at a hefty 2.92GiB. ***Nx2.0 
 <li><strong>22.3% reduction</strong> in Nexus CDN storage costs</li>
 <li><strong>22.3% less bandwidth</strong> consumed per download</li>
 <li><strong>> 22.3% faster downloads</strong> for every user(1)</li>
-<li><strong>22.3% disk space savings</strong> for mod users</li>
-<li><strong>9% improvement</strong> even over the theoretical best-case legacy scenario</li>
+<li><strong>22.3% less disk space required</strong></li>
+<li><strong>9% improvement</strong> even over the theoretical best-case legacy scenario (7zip/LZMA)</li>
 </ul>
 </div>
 
@@ -145,7 +145,7 @@ flowchart LR
         wood.dds
     end
 
-    subgraph Block1[Block 2]
+    subgraph Block1[Block 1]
         model.obj
     end
 
@@ -186,9 +186,9 @@ flowchart LR
 In this case, Block0 with `wood.dds` and Block2 with `model.obj` were in previously updated archives,
 so we can reuse them from the previous upload.
 
-!!! tip "In our Skyrim 202X example that means saving the full 17.84 GiB of possible savings."
+!!! tip "In our Skyrim 202X example you would save the full 17.84 GiB!"
 
-    Which means storing less than half the storage we were previously storing on the CDN.
+    That's less than half the storage we were previously using on our CDN!
 
 #### Selective File Downloads
 
@@ -220,7 +220,7 @@ When downloading Nx2.0 archives, you can download the header block first (typica
 parse the information, and then decide which data blocks you want to download.(1)
 { .annotate }
 
-1. This is done using the `Range` HTTP header, which allows you to specify byte ranges to download.
+1. This can be done using the `Range` HTTP header for example, which allows you to specify byte ranges to download.
 
 This in turn means you can download only the files you need, without having to download the entire archive.
 
@@ -233,9 +233,9 @@ This in turn means you can download only the files you need, without having to d
     Just 3 packets (200 files) are enough to get the metadata for ~95% of the mods out there(1).
     { .annotate }
 
-    1. Based on my sample 221 mod dataset of Reloaded-II mods. Every mod I had lying around on my machine when I was doing the research.
+    1. Based on my small-medium dataset of 221 Reloaded-II mods. That was every mod I had lying around on my machine when I was doing the research.
 
-    This is where the `'typically <=4KB in size'` comes from.
+    This is where the `'typically <=4KB in size'` claim comes from.
 
 ##### Selective File Downloads in Practice
 
@@ -254,9 +254,9 @@ And you want to update to the shiny new version:
 You're ***jumping across multiple versions***, so there's no direct update path from the mod author.(1)
 { .annotate }
 
-1. Well... — ***update paths are pretty rare anyway***... It's always "download the whole thing again." But this makes for a perfect real-world example of the pain we all experience.
+1. Well... — ***update paths are pretty rare anyway***... It's usually always "download the whole thing again." But this makes for a perfect real-world example of the pain we all experience.
 
-**The old way:** Queue up another massive `8.2GB` download. Go grab coffee, maybe lunch. Hope your internet doesn't hiccup.
+**The old way:** Queue up another `8.2GB` download. Go grab coffee, maybe lunch. Hope your internet doesn't hiccup.
 
 **The Nx2.0 way:** Here's the game-changer — ***(51.8% !!) of that massive download consists of files you already have on your hard drive*** from the previous version. 
 
@@ -265,7 +265,7 @@ You're ***jumping across multiple versions***, so there's no direct update path 
 With Nx2.0, ***you skip the redundant files entirely and download only the 48.2% that's actually new***.(1) That's not just faster — that's ***game changing***.
 { .annotate }
 
-1. And here's the kicker: those files are ***already smaller with Nx2.0's superior compression***, so you're downloading even less than 48.2% compared to today's full archives!
+1. And here's the kicker: those files are ***already smaller with Nx2.0's superior compression***, so you're downloading even less than 48.2% compared to today's status quo!
 
 ------
 
@@ -306,7 +306,7 @@ that the same file will be stored multiple times in the archive.
 
 1. Not just a car pack, the name is a bit misleading.
 
-Let's demonstrate with Nx1.0
+Demonstrated with Nx1.0
 
 | Method                   | Size    |
 | ------------------------ | ------- |
@@ -317,11 +317,11 @@ In this case, the items being deduplicated are menu and in-game car models and t
 
 !!! note "SOLID archive formats like `.7z` and `.rar` can also deduplicate files."
 
-    However, they do so at the cost of being able to extract individual files from the archive.
+    However, *they do so at the cost of being able to extract individual files from the archive*.
 
     In addition, their deduplication is not as efficient as Nx2.0's. 
     
-    Nx2.0 supports deduplication *natively*; however `.7z` and `.rar` rely on the compression algorithm
+    Nx2.0 supports deduplication ***natively***; however `.7z` and `.rar` rely on the compression algorithm
     to find the same data previously in the smashed together (SOLID) data.
     
     If the archive is large, the compressor may fail to find the same data previously compressed,
@@ -333,14 +333,12 @@ In this case, the items being deduplicated are menu and in-game car models and t
 
     Extra note: Extracting duplicated files in `Nx2.0` is a memory copy, so it's super fast!!
     That's ***24GB/s (single threaded)*** on Ryzen 7000/9000 CPU.
-    
-    On `.7z`/`.rar` that's a regular decompression, so 125-200MB/s on a single thread.
 
 #### Delta Updates
 
 !!! info "Nx2.0 can be used for binary patching of files."
 
-    Sometimes the game does not load loose files, sometimes all the contents are packed into a 
+    Sometimes the game does not load loose files, sometimes most of the mod contents are packed into a 
     single archive, like, for example a `.pak` file for Unreal Engine games.
 
 Nx2.0 supports binary patching of files natively; meaning that you can create a patch archive
@@ -351,10 +349,12 @@ These will be moved to the Nx2.0 documentation soon, and become a built-in featu
 
 <figure markdown="span" class="annotate">
   ![images](./images/delta-patch-r2.webp)
-  <figcaption>My Reloaded-II Framework supports delta patches; same mod as before, example above.</figcaption>
+  <figcaption>My Reloaded-II Framework supports delta patches.<br/>Same mod as before in the example above.</figcaption>
 </figure>
 
-We did a binary patch over a ~2GB game's native `.bfs` archive.
+We did a binary patch over a ~2GB game's native `.bfs` archive.  
+(i.e. `selo_1.5.0.bfs` (2GB) -> `selo_1.5.1.bfs` (2GB)).
+
 Now the upgrade path from 1.5.0 to 1.5.1 is just a 138MB patch, rather than a 1300+MB full download.
 
 #### Improved Authoring Experience for Mod Authors
@@ -397,12 +397,11 @@ fixed landline internet connection.
 | LZMA (7z) | 7800X3D | ~ 22 min                  | 1h 11 min 56s          | ~1h 34min     | Most popular high end gaming CPU. |
 | LZMA (7z) | 7600X   | ~ 27 min 18s              | 1h 11 min 56s          | ~1h 39min 14s | Most popular CPU used by gamers.  |
 
-!!! note "Compression time is estimated based on built-in 7zip benchmark utility."
+*Almost 2 hours... quite rough, isn't it?*
+
+??? note "Compression time is estimated based on results of built-in 7zip benchmark utility."
 
     Scaled using [7-Zip Compression Benchmark Results](https://gamersnexus.net/cpus/amd-ryzen-9-9950x3d-cpu-review-benchmarks-vs-9800x3d-285k-9950x-more#9950x3d-production-benchmarks); which scales accurately with compression time in practice.
-
-Almost 2 hours, that's quite rough, isn't it?
-And that's what it's all about.
 
 ***Compressing for web takes a very long time***. Large projects take long to compress, *and especially long* to upload.
 
@@ -471,32 +470,34 @@ And now let's scale those results to hardware and internet speeds that our users
 | BZip3 + transform | 7800X3D | ~10min 1.84s     | 1h 3min 12.46s         | ~1h 13min 14.30s | 20min 45.7s (0.779)  |
 | BZip3 + transform | 7600X   | ~13min 57.63s    | 1h 3min 12.46s         | ~1h 17min 10.09s | 22min 3.91s (0.777)  |
 
-It is projected that for large mods full of textures (where ~90% of the file size in mods lives), the
-user will be able to complete the `archive` -> `upload` process ***22.3% faster*** (using 0.777x of the time)
-than with the current `.7z` format. For the `.zip` and `.rar` formats, the improvement is expected to be
-around 30%.
+For large mods full of textures, the user will be able to complete the `archive` -> `upload` process
+***22.3% faster*** (using 0.777x of the time) than with the current `.7z` format. 
 
-!!! note "For non-texture data, the improvement here is negligible."
+For the `.zip` and `.rar` formats, the improvement is expected to be around 30%.
 
-    I've focused on textures here as that's where all the large archives are. In a typical mod setup,
-    you'll have a bunch of large texture archives, and many small non-texture archives. Textures
+***This is the 'baseline', the magic of Nx2.0 comes right ahead.***
+
+!!! note "Note: For non-texture data, the improvement here is negligible."
+
+    I've focused on textures here as ***that's where all the large archives are***. In a typical mod setup,
+    you'll have a bunch of large texture mods, and many small non-texture mods. Textures
     usually represent ~90% of disk space in a mod setup.
 
     Non-texture mods are typically <100MiB in size, so the compress and upload times are not a problem
-    in user experience (~20 seconds total). This is why I've focused on where it's painful for mod authors
-    here.
+    in user experience (~20 seconds total). This is why I've focused on where it's specifically painful
+    for mod authors.
 
-    For non-texture data, the optimal codec is usually so the worst case scenario for Nx2.0 with any data 
-    is equal to `7z` (the best case legacy scenario). 
+    For non-texture data, the optimal codec is usually LZMA, so the 'worst case' scenario for Nx2.0 with any data 
+    being equal with `7z` (the best case legacy scenario). 
 
-##### What If You're Making Mod Updates? (Software Edition)
+##### Making Mod Updates Faster with Nx2.0
 
 !!! info "What do you do is you want to update your mod?"
 
     Nx2.0 has a nice built-in feature that allows you to construct new archives using previous
     archives as a base.
 
-This feature already exists in Nx1.0, [(relevant changelog)](https://github.com/Nexus-Mods/NexusMods.Archives.Nx/releases/tag/0.6.4)
+This feature already exists (mostly) in Nx1.0, [(relevant changelog)](https://github.com/Nexus-Mods/NexusMods.Archives.Nx/releases/tag/0.6.4)
 and powers the 'Garbage Collector' feature of the Nexus Mods App.
 
 Suppose you're a mod author, and you're about to release a new version of your mod, like `10.0`.
@@ -524,8 +525,8 @@ I'll use the existing Nx1.0 archive format to demonstrate:
 
 Because we were able to directly copy 45% of the data without compressing again, archive creation time was slashed.
 
-A minor/patch update like `10.0.0` -> `10.0.1` that updates 200MB of files only would on the other hand,
-take ~10 seconds, rather than 5-10 minutes.
+***A minor/patch update like `10.0.0` -> `10.0.1` (only changes 200MB) would only take ~10 seconds***
+on the other hand, rather than 5-12 minutes.
 
 !!! note "An extra bonus"
 
@@ -536,7 +537,7 @@ take ~10 seconds, rather than 5-10 minutes.
 
 !!! tip "It should be possible to upload only the unique data from Nx2.0 archives to `nexusmods.com`."
 
-    A superpower, possible with some support from the web team at Nexus, at least.
+    A superpower, that could be made possible if we also got some support from the web team at Nexus.
 
 Remember how we can [splice Nx2.0 archives?](#avoiding-duplicate-files-in-content-distribution-networks-cdns), and then
 in turn only download what we need?
@@ -577,10 +578,11 @@ At least in my opinion.
     That restore operation needs to be as fast as humanly possible.
     You need to extract 10s of gigabytes of mods in seconds, not minutes.
 
-    In other words, how the `Nexus Mods App` uses the original Nx1.0.
+    This is how the `Nexus Mods App` uses the original Nx1.0.
 
 For this specific use case we use `ZStandard` compression, rather than the more expensive (slow)
-algorithms like `bzip3` or `LZMA`, which are more suitable for web distribution.
+algorithms like `bzip3` or `LZMA`, which are more suitable for web distribution which put more
+priority on size.
 
 This allows us to achieve the best possible tradeoff between speed and compression ratio
 that matches the needs of modern NVMe drives.
@@ -623,12 +625,14 @@ Consider the benchmarks for Nx1.0 Archive Format I originally made for the App a
 | 12                | 13.74                  | ⚠️ DDR5 Ryzen Memory Bottlenecks here          |
 | 24                | 14.13                  |                                               |
 
-!!! note "Explanation for NVMe SSD Numbers Above"
+These are benchmarks for extracting files from an archive.
 
-    We're making the following assumptions:
-    
-    - Same SSD as source and destination.
-    - 0.7093 compression ratio. (based on large texture dataset)
+We're using the same drive for reading and writing, as most users would, so the hardware resources (PCI-E lanes)
+are shared for reading and writing.
+
+The listed numbers are optimal for each drive type assuming a `0.7093` compression ratio.
+
+??? note "Explanation of NVMe SSD Numbers Above (For Number Lovers) [Expand Me]"
 
     Resources are shared between read and write operations, due to limitations of PCI-E Bandwidth,
     so the optimal read and write ratios are calculated as follows:
@@ -647,7 +651,8 @@ Consider the benchmarks for Nx1.0 Archive Format I originally made for the App a
     With `dxt-lossless-transform`, the files become smaller, meaning we need to read less data from the drive.
 
 The Nexus Mods App uses ZStandard Level 9 for real-time recompression on mod downloads. 
-The improvement in compression ratio is 15.1% compared to the previous compressed file size with `dxt-lossless-transform`.
+
+The improvement in compression ratio with `dxt-lossless-transform` is 15.1% compared to Nx1.0.
 
 This makes the new compression ratio `0.602`(1).
 { .annotate }
@@ -671,17 +676,17 @@ By having to read less from disk, *we can now use those remaining resources to w
 And of course 😉, ***most importantly***, as the files are now smaller, users would now only need
 ~85-87GB of disk space to download a collection where we may have previously used ~100GB.
 
-*That's a lot!*
+*That's quite valuable!*
 
 ### 3. **As a game archive format**
 
 !!! tip "Nx2.0 can be directly integrated into game engines as a native archive format."
 
-    This is the second use case I want to achieve with Nx2.0.
+    This is the another use case I want to achieve with Nx2.0.
 
 !!! info "This is a personal goal of mine, not an 'MVP' sort of thing."
 
-    But rest assured, Nx2.0 will be better than most AAA game archive formats(1).
+    But rest assured, Nx2.0 will be better than most AAA game archive formats for the job(1).
     { .annotate }
     
     1. I speak from experience, having reverse engineered many of them. 
@@ -739,13 +744,13 @@ we have to read less data from the drive to get the same amount of data decompre
 Combined with the 15% improvement in general [load times](./dxt-lossless-transform.md#unpack-performance),
 we can go beyond the previous limits.
 
-!!! question "What does that mean?"
+!!! question "What does that enable?"
 
 #### Nx2.0 is Competitive with DirectStorage
 
 !!! tip "Nx2.0 will produce load times competitive with DirectStorage."
 
-    Faster for Gen 4.0 SSDs, a bit slower for Gen 5.0 SSDs.  
+    Faster for NVMe Gen 4.0 SSDs, a bit slower for Gen 5.0 SSDs.  
     That may sound like a bold claim, but hear me out.
 
 There is a fairly common misconception that in DirectStorage data flows directly from the NVMe drive to the GPU,
@@ -761,7 +766,7 @@ flowchart LR
     VRAM-Compressed -. ~45GB/s .-> VRAM-Decompressed
 ```
 
-<center>Loading with DirectStorage</center>
+<center>Loading with DirectStorage 👆</center>
 
 ```mermaid
 flowchart LR
@@ -771,13 +776,12 @@ flowchart LR
     CPU+RAM-Decompressed -. ~24GB/s .-> VRAM
 ```
 
-<center>Loading with Nx2.0</center>
+<center>Loading with Nx2.0 👆</center>
 
-By all means, you would imagine that DirectStorage is faster, right?
-***Well, not quite.*** Here's the gotcha.
+By all means, you would imagine that DirectStorage is faster, right?  
+***Well, not quite.*** Here's the gotcha!
 
-After all, the load operations above are like a conveyor belt,
-you're processing multiple files in multiple stages at once.
+All files are passed through all of the operations as shown above, one by one, like on a conveyor belt.
 
 ```mermaid
 flowchart LR
@@ -785,25 +789,28 @@ flowchart LR
     SSD -. ~7GB/s .-> CPU+RAM
 ```
 
-<center>Which exposes a very clear bottleneck, the NVMe SSD.</center>
+<center>Which exposes a very clear bottleneck, *the NVMe SSD!*</center>
 
-And, well, ***in Nx2.0, textures are smaller than in DirectStorage***, why is that?
+!!! tip "*DirectStorage is bottlenecked by the NVMe Read Speed!*"
 
-In order to achieve fast decompression, DirectStorage splits data into very small chunks, which are then
-decompressed in parallel by the GPU. DirectStorage also uses `GDeflate`, which is less efficient
-than the `ZStandard` codec used in Nx2.0. Compression ratios suffer.
+and... ***in Nx2.0, the textures are smaller than in DirectStorage***!
 
-In other words, to decompress the same amount of data, ***DirectStorage needs to read much more data from the SSD than Nx2.0 does***.
+In other words, to decompress the same amount of data, *DirectStorage needs to read much more data from the SSD than Nx2.0 does*.
 And, because, for Gen4.0 drives, [even upper mid range CPUs can decompress fast enough to keep up](#fast-load-times), Nx2.0
 will achieve better load times than DirectStorage.
+
+!!! question "Why are textures smaller in Nx2.0?"
+
+    In order to achieve fast decompression, *DirectStorage* splits data into very small chunks, which are then
+    decompressed in parallel by the GPU; which hurts compression ratio. DirectStorage also uses `GDeflate`,
+    which is less efficient than the `ZStandard` codec used in Nx2.0.
 
 !!! tip "That doesn't mean you shouldn't use DirectStorage."
 
     I just thought it was an interesting comparison.
 
-    DStorage is likely faster on Gen 5.0 drives for the time being. In addition, if 
-    you have a use case where you need to dynamically stream in compressed textures
-    (e.g. new terrain in an open world game), then DirectStorage is the way to go 
+    If you have a use case where you need to dynamically stream in compressed textures
+    (e.g. load new terrain in an open world game), then DirectStorage is the way to go 
     as it relieves CPU load.
 
 ### 4. **As a Read Only Virtual FileSystem** 
@@ -813,9 +820,21 @@ will achieve better load times than DirectStorage.
     In many mods we're unnecessarily losing out on Disk Space and Load Times.<br/>
     I want to do better.
 
+!!! note "Note: My plans are to build this as part of my [Reloaded3] modding framework project."
+
+    It would use Reloaded3's own mod loader and be loaded like any other standard mod as part of a unified ecosystem.
+    Therefore, you might not see it till 2028, or similar.
+
+    Could make standalone if there's demand for it at that point, it's just that I want to start
+    with a strong base/foundation.
+
+    *Below are examples of existing cases in the modding ecosystem of why technology like this is needed.*
+
 #### Nexus Mods App: Improving Disk Space
 
 !!! info "In the Nexus Mods App, we store 2 copies of every file that is applied (active)"
+
+    And with this sort of technology, we could avoid that.
 
 When we download mods in the App, each mod goes through the following steps:
 
