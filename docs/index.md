@@ -122,6 +122,15 @@ The two projects above (and others, not named here) are parts of the larger
 
     These are practical improvements to make modding more accessible and efficient for everyone.
 
+### User Experience Improvements
+
+#### [Modular Mods are Painful](./modular-mods-are-painful.md)
+
+**Status:** Unknown
+
+Addresses the challenges of distributing and managing many small, modular mods on Nexus Mods,
+particularly for multiplayer scenarios where users need to sync identical mod setups quickly.
+
 ### Download & Distribution Features
 
 #### [Send Downloads to Specific Mod Manager](./nxm-handler.md)
